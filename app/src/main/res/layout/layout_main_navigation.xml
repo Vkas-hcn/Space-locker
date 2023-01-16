@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="presenter"
+            type="com.vkas.spacelocker.uisl.main.MainActivity.SLClick" />
+
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#4F000000"
+        android:onClick="@{() ->presenter.clickMain()}">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:onClick="@{() ->presenter.clickMainMenu()}">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:src="@mipmap/ic_start_logo"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_vertical|start"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.4">
+
+                <TextView
+                    android:id="@+id/tv_contact_us_sl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="12dp"
+                    android:gravity="start|center_vertical"
+                    android:onClick="@{() ->presenter.toContactUs()}"
+                    android:paddingTop="25dp"
+                    android:paddingBottom="25dp"
+                    android:text="@string/contact_us"
+                    android:textColor="#FF31195D"
+                    android:textSize="15sp"
+                    app:drawableStartCompat="@drawable/ic_conten" />
+
+                <TextView
+                    android:id="@+id/tv_set_password_sl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="12dp"
+                    android:gravity="start|center_vertical"
+                    android:onClick="@{() ->presenter.toSetPassword()}"
+                    android:paddingTop="25dp"
+                    android:paddingBottom="25dp"
+                    android:text="@string/set_password"
+                    android:textColor="#FF31195D"
+                    android:textSize="15sp"
+                    app:drawableStartCompat="@drawable/ic_na_lock" />
+
+                <TextView
+                    android:id="@+id/tv_share_sl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="12dp"
+                    android:gravity="start|center_vertical"
+                    android:onClick="@{() ->presenter.toShare()}"
+                    android:paddingTop="25dp"
+                    android:paddingBottom="25dp"
+                    android:text="@string/share"
+                    android:textColor="#FF31195D"
+                    android:textSize="15sp"
+                    app:drawableStartCompat="@drawable/ic_shpe" />
+
+                <TextView
+                    android:id="@+id/tv_privacy_policy_sl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="12dp"
+                    android:gravity="start|center_vertical"
+                    android:onClick="@{() ->presenter.toPrivacyPolicy()}"
+                    android:paddingTop="25dp"
+                    android:paddingBottom="25dp"
+                    android:text="@string/privacy_policy"
+                    android:textColor="#FF31195D"
+                    android:textSize="15sp"
+                    app:drawableStartCompat="@drawable/ic_xieyi" />
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+</layout>
+

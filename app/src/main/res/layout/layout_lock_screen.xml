@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isLockScreen"
+            type="Boolean"
+            android:value="false" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tv_set_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/set_your_password"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:visibility="gone"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/ed_pass"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        <com.vkas.spacelocker.widget.VerifyCodeEditText
+            android:id="@+id/ed_pass"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="120dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:vcet_is_pwd="true"
+            app:vcet_pwd_radius="10dp"
+            app:vcet_width="50dp" />
+
+
+            <TextView
+                android:id="@+id/tv_forget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:gravity="center"
+                android:text="@string/forget_your_password"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ed_pass"
+                android:textColor="#FF3888EC"
+                android:textSize="14sp" />
+
+
+
+        <GridLayout
+            android:id="@+id/gl_pass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="44dp"
+            android:layout_marginTop="57dp"
+            android:layout_marginEnd="44dp"
+            android:columnCount="3"
+            android:rowCount="4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_forget">
+
+            <ImageView
+                android:id="@+id/img_1"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="28dp"
+                android:src="@mipmap/ic_1" />
+
+            <ImageView
+                android:id="@+id/img_2"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="28dp"
+                android:src="@mipmap/ic_2" />
+
+            <ImageView
+                android:id="@+id/img_3"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:src="@mipmap/ic_3" />
+
+            <ImageView
+                android:id="@+id/img_4"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="28dp"
+                android:src="@mipmap/ic_4" />
+
+            <ImageView
+                android:id="@+id/img_5"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="28dp"
+                android:src="@mipmap/ic_5" />
+
+            <ImageView
+                android:id="@+id/img_6"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginBottom="28dp"
+                android:src="@mipmap/ic_6" />
+
+            <ImageView
+                android:id="@+id/img_7"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="28dp"
+                android:src="@mipmap/ic_7" />
+
+            <ImageView
+                android:id="@+id/img_8"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="28dp"
+                android:src="@mipmap/ic_8" />
+
+            <ImageView
+                android:id="@+id/img_9"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginBottom="28dp"
+                android:src="@mipmap/ic_9" />
+
+            <ImageView
+                android:id="@+id/img_x"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="28dp"
+                android:src="@mipmap/ic_x" />
+
+            <ImageView
+                android:id="@+id/img_0"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="28dp"
+                android:src="@mipmap/ic_0" />
+
+            <ImageView
+                android:id="@+id/img_en"
+
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:src="@mipmap/ic_en" />
+        </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
