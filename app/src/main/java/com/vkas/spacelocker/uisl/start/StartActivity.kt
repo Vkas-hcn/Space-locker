@@ -15,6 +15,9 @@ import com.vkas.spacelocker.BR
 import com.vkas.spacelocker.BuildConfig
 import com.vkas.spacelocker.R
 import com.vkas.spacelocker.appsl.App
+import com.vkas.spacelocker.appsl.slad.SlLoadAppListAd
+import com.vkas.spacelocker.appsl.slad.SlLoadLockAd
+import com.vkas.spacelocker.appsl.slad.SlLoadOpenAd
 import com.vkas.spacelocker.basesl.BaseActivity
 import com.vkas.spacelocker.broadcast.SlBroadcastReceiver
 import com.vkas.spacelocker.databinding.ActivityStartBinding
@@ -25,6 +28,7 @@ import com.vkas.spacelocker.uisl.main.MainActivity
 import com.vkas.spacelocker.utils.KLog
 import com.vkas.spacelocker.utils.MmkvUtils
 import com.vkas.spacelocker.utils.SpaceLockerUtils.getAppList
+import com.vkas.spacelocker.utils.SpaceLockerUtils.isThresholdReached
 import com.xuexiang.xui.widget.progress.HorizontalProgressView
 import kotlinx.coroutines.*
 
@@ -33,6 +37,7 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
     companion object {
         var isCurrentPage: Boolean = false
     }
+    private var jobOpenAdsSl: Job? = null
     private var liveJumpHomePage = MutableLiveData<Boolean>()
     private var liveJumpHomePage2 = MutableLiveData<Boolean>()
     override fun initContentView(savedInstanceState: Bundle?): Int {
@@ -55,7 +60,7 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
     override fun initData() {
         super.initData()
         binding.horProViewSl.setProgressViewUpdateListener(this)
-        binding.horProViewSl.setProgressDuration(2000)
+        binding.horProViewSl.setProgressDuration(8000)
         binding.horProViewSl.startProgressAnimation()
         liveEventBusFs()
         startServiceAndBroadcast()
@@ -78,7 +83,7 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
     /**
      * 开启服务和广播
      */
-    fun startServiceAndBroadcast(){
+    fun startServiceAndBroadcast() {
         val innerReceiver = SlBroadcastReceiver()
         //动态注册广播
         val intentFilter = IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
@@ -87,6 +92,7 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
         val intentOne = Intent(this, LockService::class.java)
         startService(intentOne)
     }
+
     private fun getFirebaseDataFs() {
         if (BuildConfig.DEBUG) {
             preloadedAdvertisement()
@@ -97,7 +103,6 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
             return
         } else {
             preloadedAdvertisement()
-
             val auth = Firebase.remoteConfig
             auth.fetchAndActivate().addOnSuccessListener {
                 MmkvUtils.set(Constant.PROFILE_SL_DATA, auth.getString("FsServiceData"))
@@ -108,21 +113,6 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
         }
     }
 
-    /**
-     * 预加载广告
-     */
-    private fun preloadedAdvertisement() {
-//        FsApp.isAppOpenSameDayFs()
-//        if (isThresholdReached()) {
-            KLog.d(logTagSl, "广告达到上线")
-            lifecycleScope.launch {
-                delay(2000L)
-                liveJumpHomePage.postValue(true)
-            }
-//        } else {
-//            loadAdvertisement()
-//        }
-    }
 
     private fun jumpHomePageData() {
         liveJumpHomePage2.observe(this, {
@@ -151,56 +141,74 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
         finish()
     }
 
-//    /**
-//     * 加载广告
-//     */
-//    private fun loadAdvertisement() {
-//        //开屏
-//        FsLoadOpenAd.getInstance().adIndexFs = 0
-//        FsLoadOpenAd.getInstance().advertisementLoadingFs(this)
-//        rotationDisplayOpeningAdFs(getAdServerDataFs())
-//        FsLoadHomeAd.getInstance().adIndexFs = 0
-//        FsLoadHomeAd.getInstance().advertisementLoadingFs(this)
-//        FsLoadConnectAd.getInstance().adIndexFs = 0
-//        FsLoadConnectAd.getInstance().advertisementLoadingFs(this)
-//        FsLoadResultAd.getInstance().adIndexFs = 0
-//        FsLoadResultAd.getInstance().advertisementLoadingFs(this)
-//        FsLoadBackAd.getInstance().adIndexFs = 0
-//        FsLoadBackAd.getInstance().advertisementLoadingFs(this)
-//    }
+    /**
+     * 加载广告
+     */
+    private fun loadAdvertisement() {
+        // 开屏
+        SlLoadOpenAd.getInstance().adIndexSl = 0
+        SlLoadOpenAd.getInstance().advertisementLoadingSl(this)
+        rotationDisplayOpeningAdSl()
+        SlLoadAppListAd.getInstance().adIndexSl = 0
+        SlLoadAppListAd.getInstance().advertisementLoadingSl(this)
 
-//    /**
-//     * 轮训展示开屏广告
-//     */
-//    private fun rotationDisplayOpeningAdFs(adData: FsAdBean) {
-//        lifecycleScope.launch {
-//            try {
-//                withTimeout(10000L) {
-//                    delay(1000L)
-//                    while (isActive) {
-//                        KLog.e(logTagSl,"fs_open[FsLoadOpenAd.getInstance().adIndexFs].fs_type====${adData.fs_open.getOrNull(FsLoadOpenAd.getInstance().adIndexFs)?.fs_type}")
-//                        val showState =
-//                            if (adData.fs_open.getOrNull(FsLoadOpenAd.getInstance().adIndexFs)?.fs_type == "screen") {
-//                                KLog.d(logTagSl, "open--开始检查screen广告位")
-//                                FsLoadOpenAd.getInstance()
-//                                    .displayStartInsertAdvertisementFs(this@GuideActivity)
-//                            } else {
-//                                KLog.d(logTagSl, "open--开始检查open广告位")
-//                                FsLoadOpenAd.getInstance()
-//                                    .displayOpenAdvertisementFs(this@GuideActivity)
-//                            }
-//                        if (showState) {
-//                            lifecycleScope.cancel()
-//                        }
-//                        delay(1000L)
-//                    }
-//                }
-//            } catch (e: TimeoutCancellationException) {
-//                KLog.e("TimeoutCancellationException I'm sleeping $e")
-//                jumpPage()
-//            }
-//        }
-//    }
+
+        SlLoadLockAd.getInstance().adIndexSl = 0
+        SlLoadLockAd.getInstance().advertisementLoadingSl(this)
+//        // 首页原生
+//        SlLoadVpnAd.getInstance().adIndexSl = 0
+//        SlLoadVpnAd.getInstance().advertisementLoadingSl(this)
+//        // 结果页原生
+//        SlLoadResultAd.getInstance().adIndexSl = 0
+//        SlLoadResultAd.getInstance().advertisementLoadingSl(this)
+//        // 连接插屏
+//        SlLoadConnectAd.getInstance().adIndexSl = 0
+//        SlLoadConnectAd.getInstance().advertisementLoadingSl(this)
+//        // 服务器页原生
+//        SlLoadBackAd.getInstance().adIndexSl = 0
+//        SlLoadBackAd.getInstance().advertisementLoadingSl(this)
+    }
+
+    /**
+     * 轮训展示开屏广告
+     */
+    private fun rotationDisplayOpeningAdSl() {
+        jobOpenAdsSl = lifecycleScope.launch {
+            try {
+                withTimeout(8000L) {
+                    delay(1000L)
+                    while (isActive) {
+                        val showState = SlLoadOpenAd.getInstance()
+                            .displayOpenAdvertisementSl(this@StartActivity)
+                        if (showState) {
+                            jobOpenAdsSl?.cancel()
+                            jobOpenAdsSl = null
+                        }
+                        delay(1000L)
+                    }
+                }
+            } catch (e: TimeoutCancellationException) {
+                KLog.e("TimeoutCancellationException I'm sleeping $e")
+                jumpPage()
+            }
+        }
+    }
+
+    /**
+     * 预加载广告
+     */
+    private fun preloadedAdvertisement() {
+        App.isAppOpenSameDaySl()
+        if (isThresholdReached()) {
+            KLog.d(logTagSl, "广告达到上线")
+            lifecycleScope.launch {
+                delay(2000L)
+                liveJumpHomePage.postValue(true)
+            }
+        } else {
+            loadAdvertisement()
+        }
+    }
 
     override fun onHorizontalProgressStart(view: View?) {
 

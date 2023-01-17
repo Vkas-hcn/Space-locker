@@ -2,21 +2,14 @@ package com.vkas.spacelocker.uisl.main
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
-import android.os.AsyncTask
 import androidx.lifecycle.MutableLiveData
 import com.vkas.spacelocker.R
 import com.vkas.spacelocker.appsl.App
 import com.vkas.spacelocker.appsl.App.Companion.mmkvSl
 import com.vkas.spacelocker.basesl.BaseViewModel
-import com.vkas.spacelocker.bean.CommLockInfo
 import com.vkas.spacelocker.bean.SlAppBean
 import com.vkas.spacelocker.enevtsl.Constant
-import com.vkas.spacelocker.lock.CommLockInfoManager
 import com.vkas.spacelocker.utils.KLog
-import com.vkas.spacelocker.utils.LockWindow
 import com.vkas.spacelocker.utils.MmkvUtils
 import com.vkas.spacelocker.utils.SpaceLockerUtils
 import com.vkas.spacelocker.utils.SpaceLockerUtils.clearApplicationData

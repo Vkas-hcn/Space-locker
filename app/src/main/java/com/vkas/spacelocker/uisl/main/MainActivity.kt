@@ -18,12 +18,15 @@ import android.net.Uri
 import android.os.Build
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.vkas.spacelocker.appsl.App
+import com.vkas.spacelocker.appsl.slad.SlLoadAppListAd
 import com.vkas.spacelocker.broadcast.SlBroadcastReceiver
 import com.vkas.spacelocker.enevtsl.Constant
+import com.vkas.spacelocker.enevtsl.Constant.logTagSl
 import com.vkas.spacelocker.uisl.websl.WebSlActivity
 import com.vkas.spacelocker.utils.KLog
 import com.vkas.spacelocker.utils.MmkvUtils
@@ -33,6 +36,7 @@ import com.vkas.spacelocker.widget.SlLockeringDialog
 import com.xuexiang.xutil.tip.ToastUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 
@@ -41,6 +45,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     private lateinit var appListAdapter: AppListAdapter
     private var lockFrameJob: Job? = null
     private var liveLock = MutableLiveData<Bundle>()
+    private var jobNativeAdsSl: Job? = null
+
     override fun initContentView(savedInstanceState: Bundle?): Int {
         return R.layout.activity_main
     }
@@ -81,6 +87,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         viewModel.whetherPopUpPasswordSettingBox(this)
         initRecyclerView()
         createBroadcast()
+        SlLoadAppListAd.getInstance().whetherToShowSl = false
+        initHomeAd()
     }
 
     override fun initViewObservable() {
@@ -275,7 +283,18 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             startActivity(intent)
         }
     }
-
+    private fun initHomeAd() {
+        jobNativeAdsSl = lifecycleScope.launch {
+            while (isActive) {
+                SlLoadAppListAd.getInstance().setDisplayHomeNativeAdSl(this@MainActivity, binding)
+                if (SlLoadAppListAd.getInstance().whetherToShowSl) {
+                    jobNativeAdsSl?.cancel()
+                    jobNativeAdsSl = null
+                }
+                delay(1000L)
+            }
+        }
+    }
     override fun onResume() {
         super.onResume()
         if(appListBean.isEmpty()){
@@ -293,6 +312,24 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         if (App.forgotPassword == Constant.SKIP_TO_FORGET_PASSWORD) {
             KLog.e("TAG","onResume-----3")
             viewModel.showClearPasswordPopUp(this, appListAdapter,-1)
+        }
+        lifecycleScope.launch {
+            delay(300)
+            if (lifecycle.currentState != Lifecycle.State.RESUMED) {
+                return@launch
+            }
+            if (App.nativeAdRefreshSl) {
+                SlLoadAppListAd.getInstance().whetherToShowSl = false
+                if (SlLoadAppListAd.getInstance().appAdDataSl != null) {
+                    KLog.d(logTagSl, "onResume------>11")
+                    SlLoadAppListAd.getInstance().setDisplayHomeNativeAdSl(this@MainActivity, binding)
+                } else {
+                    binding.appListAdSl = false
+                    KLog.d(logTagSl, "onResume------>22")
+                    SlLoadAppListAd.getInstance().advertisementLoadingSl(this@MainActivity)
+                    initHomeAd()
+                }
+            }
         }
     }
 

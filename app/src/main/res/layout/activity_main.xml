@@ -12,7 +12,10 @@
         <variable
             name="presenter"
             type="com.vkas.spacelocker.uisl.main.MainActivity.SLClick" />
-
+        <variable
+            name="appListAdSl"
+            type="Boolean"
+            android:value="false" />
         <variable
             name="sidebarShowsSL"
             type="Boolean"
@@ -22,14 +25,6 @@
             name="dataEmpty"
             type="Boolean"
             android:value="false" />
-
-        <variable
-            name="adapter"
-            type="com.vkas.spacelocker.uisl.main.AppListAdapter" />
-
-        <variable
-            name="layoutManager"
-            type="androidx.recyclerview.widget.RecyclerView.LayoutManager" />
     </data>
 
     <FrameLayout
@@ -92,13 +87,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="462dp"
                 android:layout_margin="16dp"
-                android:visibility="@{dataEmpty ? View.VISIBLE : View.GONE}"
                 android:background="@drawable/bg_app_list"
+                android:visibility="@{dataEmpty ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/item_app" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/con_list_empty"
                 android:layout_width="match_parent"
@@ -137,13 +133,49 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageView" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingTop="18dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_margin="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <FrameLayout
+                        android:id="@+id/sl_ad_frame"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="@{appListAdSl ? View.VISIBLE : View.GONE}" />
+
+                    <ImageView
+                        android:id="@+id/img_sl_ad_frame"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:scaleType="fitXY"
+                        android:visibility="@{appListAdSl ? View.GONE : View.VISIBLE}" />
+                </FrameLayout>
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <include
-                    android:id="@+id/in_home_navigation"
-                    layout="@layout/layout_main_navigation"
-                    android:visibility="@{sidebarShowsSL ? View.VISIBLE : View.GONE}"
-                    binding:presenter="@{presenter}" />
+        <include
+            android:id="@+id/in_home_navigation"
+            layout="@layout/layout_main_navigation"
+            android:visibility="@{sidebarShowsSL ? View.VISIBLE : View.GONE}"
+            binding:presenter="@{presenter}" />
 
     </FrameLayout>
 
