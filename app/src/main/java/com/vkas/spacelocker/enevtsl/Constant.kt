@@ -1,6 +1,8 @@
 package com.vkas.spacelocker.enevtsl
 
 object Constant {
+    // 是否刷新原生广告
+    const val WHETHER_REFRESH_NATIVE_AD = "whetherRefreshNativeAd"
     // 是否刷新加锁列表
     const val REFRESH_LOCK_LIST = "refreshLockList"
     // 跳转忘记密码
@@ -57,7 +59,7 @@ object Constant {
     const val WHETHER_SL_CONNECTED="whetherSlConnected"
     // 当前服务器
     const val CURRENT_SL_SERVICE="currentSlService"
-    // connect插屏广告展示
+    // lock插屏广告展示
     const val PLUG_SL_ADVERTISEMENT_SHOW="plugSlAdvertisementShow"
     // Faster server
     const val FASTER_SL_SERVER= "Faster server"

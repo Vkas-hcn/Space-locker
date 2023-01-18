@@ -23,21 +23,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.vkas.spacelocker.appsl.App
+import com.vkas.spacelocker.appsl.App.Companion.mmkvSl
 import com.vkas.spacelocker.appsl.slad.SlLoadAppListAd
+import com.vkas.spacelocker.appsl.slad.SlLoadLockAd
 import com.vkas.spacelocker.broadcast.SlBroadcastReceiver
 import com.vkas.spacelocker.enevtsl.Constant
 import com.vkas.spacelocker.enevtsl.Constant.logTagSl
 import com.vkas.spacelocker.uisl.websl.WebSlActivity
 import com.vkas.spacelocker.utils.KLog
 import com.vkas.spacelocker.utils.MmkvUtils
+import com.vkas.spacelocker.utils.SpaceLockerUtils.isThresholdReached
 import com.vkas.spacelocker.widget.LockerDialog
 import com.vkas.spacelocker.widget.PasswordDialog
 import com.vkas.spacelocker.widget.SlLockeringDialog
+import com.xuexiang.xui.utils.Utils
 import com.xuexiang.xutil.tip.ToastUtils
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
@@ -46,7 +47,16 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     private var lockFrameJob: Job? = null
     private var liveLock = MutableLiveData<Bundle>()
     private var jobNativeAdsSl: Job? = null
+    private var launchLockingJob: Job? = null
 
+    //重复点击
+    var repeatClick = false
+    private var jobRepeatClick: Job? = null
+    private var isHaveAd: Boolean = false
+    //点击下标
+    private var positionApp: Int = 0
+    // 跳转后弹框
+    private var bounceBoxAfterJump = false
     override fun initContentView(savedInstanceState: Bundle?): Int {
         return R.layout.activity_main
     }
@@ -66,9 +76,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         binding.inMainTitle.imgMiddle.setImageResource(R.mipmap.ic_applock)
         binding.inMainTitle.imgRight.setImageResource(R.drawable.ic_title_settting_sl)
         binding.inMainTitle.imgRight.setOnClickListener {
-            KLog.e("TAG", "inMainTitle-----")
             binding.sidebarShowsSL = binding.sidebarShowsSL != true
-
         }
 
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
@@ -94,23 +102,58 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     override fun initViewObservable() {
         super.initViewObservable()
         viewModel.liveLock.observe(this, {
+            App.whetherEnteredSuccessPassword = true
             showLockFrame(it)
         })
-
-
     }
+
     private fun liveEventBusReceive() {
         LiveEventBus
             .get(Constant.REFRESH_LOCK_LIST, Boolean::class.java)
             .observeForever {
                 sortApplicationToEmptyList()
             }
+        //插屏关闭后跳转
+        LiveEventBus
+            .get(Constant.PLUG_SL_ADVERTISEMENT_SHOW, Boolean::class.java)
+            .observeForever {
+                KLog.e("state", "插屏关闭接收=${it}")
+                if(!it){
+                    //重复点击
+                    jobRepeatClick = lifecycleScope.launch {
+                        if (!repeatClick) {
+                            KLog.e("state", "插屏关闭后跳转=${it}")
+                            App.timesLockingAndUnlocking = 0
+                            lockClickJudgment()
+                            repeatClick = true
+                        }
+                        delay(1000)
+                        repeatClick = false
+                    }
+                }
+            }
+        //密码框关闭后刷新广告
+        LiveEventBus
+            .get(Constant.WHETHER_REFRESH_NATIVE_AD, Boolean::class.java)
+            .observeForever {
+                    //重复点击
+                    jobRepeatClick = lifecycleScope.launch {
+                        if (!repeatClick) {
+                            KLog.e("state", "密码框关闭后刷新广告=${it}")
+                            refreshNativeAds()
+                            repeatClick = true
+                        }
+                        delay(1000)
+                        repeatClick = false
+                    }
+            }
     }
+
     private fun initRecyclerView() {
         appListBean = ArrayList()
         SpaceLockerUtils.isOnRight = 0
         appListBean = SpaceLockerUtils.appList
-        KLog.e("TAG","appList---2--${SpaceLockerUtils.appList.size}")
+        KLog.e("TAG", "appList---2--${SpaceLockerUtils.appList.size}")
 
         var typeEnum = false
         appListBean.forEach {
@@ -126,39 +169,108 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         binding.recAppList.adapter = appListAdapter
         appListAdapter.addChildClickViewIds(R.id.img_down_state)
         appListAdapter.setOnItemChildClickListener { _, _, position ->
+            KLog.e("TAG", "setOnItemChildClickListener-11111")
             if (!Settings.canDrawOverlays(this@MainActivity)
             ) {
+                KLog.e("TAG", "setOnItemChildClickListener-q")
+
                 requestAlertWindowPermission()
                 return@setOnItemChildClickListener
             }
-            if(!hasPackageUseStatusPermission()){
+            if (!hasPackageUseStatusPermission()) {
+                KLog.e("TAG", "setOnItemChildClickListener-d")
+
                 requestPackageUseStatusPermission()
                 return@setOnItemChildClickListener
             }
-            if(appListAdapter.data[position].isLocked){
-                viewModel.clickToPopPasswordBox(this,appListAdapter,position)
-            }else{
-                showLockFrame(position)
+            KLog.e("TAG", "setOnItemChildClickListener-22222")
+            positionApp =position
+
+            if (App.timesLockingAndUnlocking > 3) {
+                isHaveAd = true
+                launchLockingAdvertisement()
+            } else {
+                isHaveAd = false
+                App.timesLockingAndUnlocking++
+                lockClickJudgment()
             }
         }
     }
+
+    /**
+     * 加锁点击判断
+     */
+    private fun lockClickJudgment() {
+        if (appListAdapter.data[positionApp].isLocked && !App.whetherEnteredSuccessPassword) {
+            viewModel.clickToPopPasswordBox(this@MainActivity, appListAdapter, positionApp)
+        } else {
+            showLockFrame(positionApp)
+        }
+    }
+
+    /**
+     * 启动加锁广告
+     */
+    private fun launchLockingAdvertisement() {
+        launchLockingJob = lifecycleScope.launch {
+            App.isAppOpenSameDaySl()
+            if (isThresholdReached()) {
+                KLog.d(logTagSl, "广告达到上线")
+                App.timesLockingAndUnlocking = 0
+                isHaveAd = false
+                lockClickJudgment()
+                return@launch
+            }
+            SlLoadLockAd.getInstance().advertisementLoadingSl(this@MainActivity)
+            val mDialog = SlLockeringDialog(this@MainActivity, 8000)
+            mDialog.show()
+            try {
+                withTimeout(8000L) {
+                    delay(2000)
+                    KLog.e(logTagSl, "jobStartSl?.isActive=${launchLockingJob?.isActive}")
+                    while (launchLockingJob?.isActive == true) {
+                        val showState =
+                            SlLoadLockAd.getInstance()
+                                .displayConnectAdvertisementSl(this@MainActivity)
+                        if (showState) {
+                            launchLockingJob?.cancel()
+                            launchLockingJob = null
+                            mDialog.dismiss()
+                        }
+                        delay(1000L)
+                    }
+                }
+            } catch (e: TimeoutCancellationException) {
+                KLog.d(logTagSl, "connect---插屏超时")
+                if (launchLockingJob != null) {
+                    mDialog.dismiss()
+                    lockClickJudgment()
+                }
+            }
+        }
+    }
+
     /**
      * 加锁弹框
      */
     private fun showLockFrame(position: Int) {
         lockFrameJob = lifecycleScope.launch {
-            SlLockeringDialog(this@MainActivity).show()
-            delay(2000)
+            if (!isHaveAd) {
+                SlLockeringDialog(this@MainActivity).show()
+                delay(1000)
+            }
             appListBean.getOrNull(position)?.isLocked =
                 appListBean.getOrNull(position)?.isLocked != true
             sortApplicationToEmptyList()
             viewModel.storeLockedApplications(appListBean)
         }
     }
+
     /**
      * 应用列表排序,至空
      */
-    private fun sortApplicationToEmptyList(){
+    private fun sortApplicationToEmptyList() {
+        appListBean= SpaceLockerUtils.appList
         val list = appListBean
             .asSequence()
             .distinctBy { it.packageNameSl }
@@ -176,9 +288,11 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         } else {
             binding.dataEmpty = true
         }
-        appListBean= list
+        appListBean = list
         appListAdapter.setList(appListBean)
+        SpaceLockerUtils.appList=appListBean
     }
+
     /**
      * 创建广播
      */
@@ -217,9 +331,12 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     private fun Context.requestPackageUseStatusPermission() {
         runCatching {
             startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                data = "package:${applicationContext.packageName}".toUri()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    data = "package:${applicationContext.packageName}".toUri()
+                }
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
+            App.whetherJumpPermission =true
         }
     }
 
@@ -229,6 +346,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
                 data = "package:${applicationContext.packageName}".toUri()
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
+            App.whetherJumpPermission =true
         }
     }
 
@@ -248,6 +366,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
                     override fun doConfirm() {
                         SpaceLockerUtils.clearApplicationData()
                         appListAdapter.notifyDataSetChanged()
+                        App.whetherJumpPermission =true
                         PasswordDialog(this@MainActivity, true).show()
                     }
                 })
@@ -283,6 +402,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             startActivity(intent)
         }
     }
+
     private fun initHomeAd() {
         jobNativeAdsSl = lifecycleScope.launch {
             while (isActive) {
@@ -295,34 +415,45 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             }
         }
     }
-    override fun onResume() {
-        super.onResume()
-        if(appListBean.isEmpty()){
-            appListBean = SpaceLockerUtils.appList
+
+    /**
+     * 首页弹框
+     */
+    private fun homeFrame(){
+        if (appListBean.isEmpty()) {
             sortApplicationToEmptyList()
         }
         if (App.forgotPassword == Constant.SKIP_TO_NORMAL_PASSWORD) {
-            KLog.e("TAG","onResume-----1")
+            KLog.e("TAG", "onResume-----1")
             viewModel.noPasswordSetPassword(this)
         }
         if (App.forgotPassword == Constant.SKIP_TO_ERROR_PASSWORD) {
-            KLog.e("TAG","onResume-----2")
+            KLog.e("TAG", "onResume-----2")
             viewModel.showSettingPasswordPopUp(this)
         }
         if (App.forgotPassword == Constant.SKIP_TO_FORGET_PASSWORD) {
-            KLog.e("TAG","onResume-----3")
-            viewModel.showClearPasswordPopUp(this, appListAdapter,-1)
+            KLog.e("TAG", "onResume-----3")
+            viewModel.showClearPasswordPopUp(this, appListAdapter, -1)
         }
+    }
+    /**
+     * 刷新原生广告
+     */
+    private fun refreshNativeAds(){
         lifecycleScope.launch {
             delay(300)
+            if (App.isFrameDisplayed) {
+                return@launch
+            }
             if (lifecycle.currentState != Lifecycle.State.RESUMED) {
                 return@launch
             }
-            if (App.nativeAdRefreshSl) {
+            if (App.nativeAdRefreshSl && !App.whetherJumpPermission) {
                 SlLoadAppListAd.getInstance().whetherToShowSl = false
                 if (SlLoadAppListAd.getInstance().appAdDataSl != null) {
                     KLog.d(logTagSl, "onResume------>11")
-                    SlLoadAppListAd.getInstance().setDisplayHomeNativeAdSl(this@MainActivity, binding)
+                    SlLoadAppListAd.getInstance()
+                        .setDisplayHomeNativeAdSl(this@MainActivity, binding)
                 } else {
                     binding.appListAdSl = false
                     KLog.d(logTagSl, "onResume------>22")
@@ -330,11 +461,18 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
                     initHomeAd()
                 }
             }
+            App.whetherJumpPermission = false
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        homeFrame()
+        refreshNativeAds()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        App.isFrameDisplayed =false
+        App.isFrameDisplayed = false
+        App.whetherEnteredSuccessPassword = false
     }
 }

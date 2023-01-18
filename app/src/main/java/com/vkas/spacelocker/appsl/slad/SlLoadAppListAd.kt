@@ -149,7 +149,10 @@ class SlLoadAppListAd {
     fun setDisplayHomeNativeAdSl(activity: AppCompatActivity, binding: ActivityMainBinding) {
         activity.runOnUiThread {
             appAdDataSl.let {
-                if (it != null && !whetherToShowSl && activity.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                if (it != null
+                    && !whetherToShowSl
+                    && activity.lifecycle.currentState == Lifecycle.State.RESUMED
+                    && !App.isFrameDisplayed) {
                     val activityDestroyed: Boolean = activity.isDestroyed
                     if (activityDestroyed || activity.isFinishing || activity.isChangingConfigurations) {
                         it.destroy()
@@ -176,19 +179,19 @@ class SlLoadAppListAd {
     }
 
     private fun setCorrespondingNativeComponentSl(nativeAd: NativeAd, adView: NativeAdView) {
-        adView.mediaView = adView.findViewById(R.id.ad_media)
         // Set other ad assets.
         adView.headlineView = adView.findViewById(R.id.ad_headline)
         adView.callToActionView = adView.findViewById(R.id.ad_call_to_action)
         adView.iconView = adView.findViewById(R.id.ad_app_icon)
-        (adView.headlineView as TextView).text = nativeAd.headline
-        nativeAd.mediaContent?.let {
-            adView.mediaView?.apply { setImageScaleType(ImageView.ScaleType.CENTER_CROP) }
-                ?.setMediaContent(it)
-        }
-        adView.mediaView.clipToOutline = true
-        adView.mediaView.outlineProvider = RoundCornerOutlineProvider(8f)
+        adView.bodyView = adView.findViewById(R.id.ad_body)
 
+        (adView.headlineView as TextView).text = nativeAd.headline
+        if (nativeAd.body == null) {
+            adView.bodyView?.visibility = View.INVISIBLE
+        } else {
+            adView.bodyView?.visibility = View.VISIBLE
+            (adView.bodyView as TextView).text = nativeAd.body
+        }
         if (nativeAd.callToAction == null) {
             adView.callToActionView?.visibility = View.INVISIBLE
         } else {

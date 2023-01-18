@@ -20,9 +20,10 @@ class SlLockeringDialog : Dialog, HorizontalProgressView.HorizontalProgressUpdat
 
     private var onProgressFinishedListener: OnProgressFinishedListener? = null
     private lateinit var tvSpeedProgress: TextView
-
-    constructor(context: Context) : super(context) {
+    private var timeDelay = 1000
+    constructor(context: Context,timeDelay:Int=1000) : super(context) {
         this.mContext = context
+        this.timeDelay = timeDelay
         initView()
     }
 
@@ -30,8 +31,9 @@ class SlLockeringDialog : Dialog, HorizontalProgressView.HorizontalProgressUpdat
         fun doFinished()
     }
 
-    constructor(context: Activity, themeResId: Int) : super(context, R.style.dialog) {
+    constructor(context: Activity, timeDelay:Int=1000) : super(context, R.style.dialog) {
         this.mContext = context
+        this.timeDelay = timeDelay
         initView()
     }
 
@@ -59,7 +61,7 @@ class SlLockeringDialog : Dialog, HorizontalProgressView.HorizontalProgressUpdat
         val horProViewSl: HorizontalProgressView = findViewById(R.id.hor_pro_view_sl)
         tvSpeedProgress = findViewById(R.id.tv_speed_progress)
         horProViewSl.setProgressViewUpdateListener(this)
-        horProViewSl.setProgressDuration(2000)
+        horProViewSl.setProgressDuration(timeDelay)
         horProViewSl.startProgressAnimation()
         setCanceledOnTouchOutside(false)
         this.setCancelable(false)

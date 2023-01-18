@@ -86,7 +86,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         if (App.isFrameDisplayed) {
             return
         }
-        clearApplicationData()
         PasswordDialog(activity, true).show()
     }
 
@@ -95,13 +94,13 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
      */
     fun noPasswordSetPassword(activity: Activity) {
         KLog.e("TAG", "展示首页密码弹框----1")
-
         if (App.isFrameDisplayed) {
             return
         }
         KLog.e("TAG", "展示首页密码弹框----2")
-
         if (Utils.isNullOrEmpty(mmkvSl.getString(Constant.LOCK_CODE_SL, ""))) {
+            App.isFrameDisplayed = true
+            KLog.e("TAG"," App.isFrameDisplayed==${ App.isFrameDisplayed}")
             PasswordDialog(activity, true).show()
         }
     }

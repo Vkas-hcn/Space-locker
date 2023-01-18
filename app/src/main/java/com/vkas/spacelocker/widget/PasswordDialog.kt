@@ -1,6 +1,5 @@
 package com.vkas.spacelocker.widget
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.view.View
@@ -10,18 +9,15 @@ import android.os.Bundle
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.TextView
-import com.blankj.utilcode.util.SnackbarUtils.dismiss
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.vkas.spacelocker.R
 import com.vkas.spacelocker.appsl.App
 import com.vkas.spacelocker.enevtsl.Constant
-import com.vkas.spacelocker.uisl.main.MainActivity
 import com.vkas.spacelocker.utils.KLog
 import com.vkas.spacelocker.utils.MmkvUtils
+import com.vkas.spacelocker.utils.SpaceLockerUtils
 import com.vkas.spacelocker.utils.SpaceLockerUtils.clearApplicationData
 import com.xuexiang.xui.utils.Utils
-import com.xuexiang.xutil.app.ActivityUtils
-import org.w3c.dom.Text
 import java.util.*
 
 class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputListener {
@@ -203,23 +199,30 @@ class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputL
             } else {
                 dismiss()
                 App.isFrameDisplayed = false
-                MmkvUtils.set(Constant.LOCK_CODE_SL, secondPassword)
+                LiveEventBus.get<Boolean>(Constant.WHETHER_REFRESH_NATIVE_AD)
+                    .post(true)
                 if (App.forgotPassword == Constant.SKIP_TO_ERROR_PASSWORD) {
-                    App.forgotPassword = Constant.SKIP_TO_NORMAL_PASSWORD
-                    this.mContext?.let {
+                    this.mContext?.let { it ->
                         LockerDialog(it)
                             .setMessage(context.getString(R.string.confirm_you_encrypt))
                             ?.setConfirmTv("Sure")
                             ?.setCancelButton(object : LockerDialog.OnCancelClickListener {
                                 override fun doCancel() {
-                                    MmkvUtils.set(Constant.LOCK_CODE_SL, "")
+                                    App.forgotPassword = Constant.SKIP_TO_ERROR_PASSWORD
+//                                    MmkvUtils.set(Constant.LOCK_CODE_SL, "")
                                     PasswordDialog(it, true).show()
                                 }
                             })
                             ?.setConfirmButton(object : LockerDialog.OnConfirmClickListener {
                                 override fun doConfirm() {
                                     dismiss()
+                                    MmkvUtils.set(Constant.LOCK_CODE_SL, secondPassword)
+                                    App.forgotPassword = Constant.SKIP_TO_NORMAL_PASSWORD
                                     App.isFrameDisplayed = false
+                                    MmkvUtils.set(Constant.STORE_LOCKED_APPLICATIONS, "")
+                                    SpaceLockerUtils.appList.forEach {slAppBean->
+                                        slAppBean.isLocked = false
+                                    }
                                     LiveEventBus.get<Boolean>(Constant.REFRESH_LOCK_LIST)
                                             .post(true)
                                 }
@@ -227,6 +230,8 @@ class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputL
                             ?.show()
                     }
                 } else {
+                    MmkvUtils.set(Constant.LOCK_CODE_SL, secondPassword)
+                    App.whetherEnteredSuccessPassword = true
                     LiveEventBus.get<Boolean>(Constant.REFRESH_LOCK_LIST)
                         .post(true)
                     this.mContext?.let {
@@ -243,7 +248,7 @@ class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputL
     /**
      * 判断密码
      */
-    fun judgePassword(input: String?) {
+    private fun judgePassword(input: String?) {
         val data = App.mmkvSl.decodeString(Constant.LOCK_CODE_SL, "")
         if (Utils.isNullOrEmpty(data)) {
             return
@@ -252,6 +257,8 @@ class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputL
         if (input == data) {
             dismiss()
             App.isFrameDisplayed = false
+            LiveEventBus.get<Boolean>(Constant.WHETHER_REFRESH_NATIVE_AD)
+                .post(true)
             if (onFinishClickListener != null) {
                 onFinishClickListener!!.doFinish()
             }
@@ -292,7 +299,11 @@ class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputL
             } else {
                 judgePassword(input)
             }
-        } else {
+        }
+        if(App.forgotPassword == Constant.SKIP_TO_ERROR_PASSWORD){
+            setPassword(input)
+        }
+        if(App.forgotPassword == Constant.SKIP_TO_FORGET_PASSWORD){
             setPassword(input)
         }
     }

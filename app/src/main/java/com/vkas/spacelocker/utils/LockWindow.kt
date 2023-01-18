@@ -2,20 +2,25 @@ package com.vkas.spacelocker.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import com.vkas.spacelocker.utils.KLog.e
 import com.vkas.spacelocker.utils.KLog
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Bundle
 import android.view.*
 import android.view.View.OnTouchListener
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.blankj.utilcode.util.ActivityUtils.startActivity
 import com.vkas.spacelocker.R
 import com.vkas.spacelocker.appsl.App
 import com.vkas.spacelocker.appsl.App.Companion.mmkvSl
 import com.vkas.spacelocker.enevtsl.Constant
 import com.vkas.spacelocker.uisl.main.MainActivity
+import com.vkas.spacelocker.uisl.start.StartActivity
 import com.vkas.spacelocker.widget.LockerDialog
 import com.vkas.spacelocker.widget.VerifyCodeEditText
 import com.xuexiang.xui.utils.Utils
@@ -37,8 +42,8 @@ class LockWindow : VerifyCodeEditText.OnInputListener {
     var wmParams: WindowManager.LayoutParams? = null
     var mFloatingLayout: View? = null
 
-    var wmParamsDialog: WindowManager.LayoutParams? = null
-    var mFloatingLayoutDialog: View? = null
+//    var wmParamsDialog: WindowManager.LayoutParams? = null
+//    var mFloatingLayoutDialog: View? = null
     private lateinit var context: Context
 
     private lateinit var verifyCodeEditText: VerifyCodeEditText
@@ -56,13 +61,17 @@ class LockWindow : VerifyCodeEditText.OnInputListener {
     private lateinit var imgEn: ImageView
     private lateinit var forgetText: TextView
     private lateinit var topText: TextView
+    private lateinit var conDialogTip: ConstraintLayout
+    private lateinit var tvTips: TextView
+    private lateinit var tvCancel: TextView
+    private lateinit var tvConfirm: TextView
 
 
     fun initWindow(context: Context) {
         if (mWindowManager != null) {
             return
         }
-        initWindowDialog(context)
+//        initWindowDialog(context)
         this.context = context
         mWindowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         //设置好悬浮窗的参数
@@ -123,6 +132,13 @@ class LockWindow : VerifyCodeEditText.OnInputListener {
         imgEn = mFloatingLayout?.findViewById(R.id.img_en)!!
         forgetText = mFloatingLayout?.findViewById(R.id.tv_forget)!!
         topText = mFloatingLayout?.findViewById(R.id.tv_set_password)!!
+
+        conDialogTip = mFloatingLayout?.findViewById(R.id.con_dialog_tip)!!
+        tvTips =mFloatingLayout?.findViewById(R.id.tv_tips)!!
+        tvCancel =mFloatingLayout?.findViewById(R.id.tv_cancel)!!
+        tvConfirm =mFloatingLayout?.findViewById(R.id.tv_confirm)!!
+        tvTips.text = context.getString(R.string.password_error4_times)
+
         img1.setOnClickListener { v: View? ->
             verifyCodeEditText.setText("1", false)
         }
@@ -161,6 +177,18 @@ class LockWindow : VerifyCodeEditText.OnInputListener {
         }
         forgetText.setOnClickListener { v: View? ->
             App.forgotPassword = Constant.SKIP_TO_FORGET_PASSWORD
+            ActivityUtils.startActivity(MainActivity::class.java)
+            closeThePasswordBox()
+        }
+
+        conDialogTip.setOnClickListener {}
+        tvCancel.setOnClickListener {
+            conDialogTip.visibility = View.GONE
+            displayErrorView(false)
+            verifyCodeEditText.clearInputValue()
+        }
+        tvConfirm.setOnClickListener {
+            App.forgotPassword = Constant.SKIP_TO_ERROR_PASSWORD
             ActivityUtils.startActivity(MainActivity::class.java)
             closeThePasswordBox()
         }
@@ -246,9 +274,9 @@ class LockWindow : VerifyCodeEditText.OnInputListener {
         //移除悬浮窗
         if (mWindowManager != null) {
             mWindowManager!!.removeView(mFloatingLayout)
-            if(mFloatingLayoutDialog?.windowToken !=null){
-                mWindowManager!!.removeView(mFloatingLayoutDialog)
-            }
+//            if(mFloatingLayoutDialog?.windowToken !=null){
+//                mWindowManager!!.removeView(mFloatingLayoutDialog)
+//            }
             mWindowManager = null
             MmkvUtils.set(Constant.NUMBER_OF_ERRORS, 0)
         }
@@ -258,79 +286,80 @@ class LockWindow : VerifyCodeEditText.OnInputListener {
     /**
      * 重置密码弹框
      */
-    fun resetPasswordPopup() {
-        mWindowManager?.addView(mFloatingLayoutDialog, wmParamsDialog)
+    private fun resetPasswordPopup() {
+        conDialogTip.visibility = View.VISIBLE
+//        mWindowManager?.addView(mFloatingLayoutDialog, wmParamsDialog)
         MmkvUtils.set(Constant.NUMBER_OF_ERRORS, 0)
     }
 
 
-    fun initWindowDialog(context: Context) {
-        if (mWindowManager != null) {
-            return
-        }
-        mWindowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        //设置好悬浮窗的参数
-        wmParamsDialog = paramsDialog
-        //这里 如果不设置透明  会导致添加的悬浮框带有黑边 布局文件方面  我将自定义布局没有放在最顶层  而是在外面又套了一层 达到我需要的效果 避免类似自定义dialog宽高显示不正常的情况
-        wmParamsDialog!!.format = PixelFormat.TRANSPARENT
-        wmParamsDialog!!.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
-//        wmParamsDialog!!.x = 300
-//        wmParamsDialog!!.y = 300
-        wmParamsDialog!!.width = WindowManager.LayoutParams.MATCH_PARENT
-        wmParamsDialog!!.height = WindowManager.LayoutParams.MATCH_PARENT
-        wmParamsDialog!!.format = PixelFormat.OPAQUE
-        wmParamsDialog!!.alpha = 1.0f
-        processDialogControls(context)
-    }
-
-    //设置可以显示在状态栏上
-    //设置悬浮窗口长宽数据
-    private val paramsDialog: WindowManager.LayoutParams
-        private get() {
-            wmParamsDialog = WindowManager.LayoutParams()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                wmParamsDialog!!.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            } else {
-                wmParamsDialog!!.type = WindowManager.LayoutParams.TYPE_PHONE
-            }
-            //设置可以显示在状态栏上
-            wmParamsDialog!!.flags =
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
-                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-            val screenWidth = ScreenUtils.getScreenWidth()
-            val screenHeight = ScreenUtils.getScreenHeight()
-
-            //设置悬浮窗口长宽数据
-            wmParamsDialog!!.width = screenWidth
-            wmParamsDialog!!.height = screenHeight
-                    wmParams?.horizontalMargin= dip2px(10f).toFloat();
-            return wmParamsDialog as WindowManager.LayoutParams
-        }
-
-    /**
-     * 处理弹框控件
-     */
-    private fun processDialogControls(context: Context) {
-        val inflater = LayoutInflater.from(context)
-        mFloatingLayoutDialog = inflater.inflate(R.layout.dialog_tips, null)
-        //寻找控件
-        val tvTips:TextView = mFloatingLayoutDialog?.findViewById(R.id.tv_tips)!!
-        val tvCancel:TextView = mFloatingLayoutDialog?.findViewById(R.id.tv_cancel)!!
-        val tvConfirm:TextView = mFloatingLayoutDialog?.findViewById(R.id.tv_confirm)!!
-
-        tvTips.text = context.getString(R.string.password_error4_times)
-        tvCancel.setOnClickListener { v: View? ->
-            if (mWindowManager != null) {
-                mWindowManager!!.removeView(mFloatingLayoutDialog)
-                displayErrorView(false)
-                verifyCodeEditText.clearInputValue()
-            }
-        }
-        tvConfirm.setOnClickListener { v: View? ->
-            App.forgotPassword = Constant.SKIP_TO_ERROR_PASSWORD
-            ActivityUtils.startActivity(MainActivity::class.java)
-            closeThePasswordBox()
-        }
-    }
+//    fun initWindowDialog(context: Context) {
+//        if (mWindowManager != null) {
+//            return
+//        }
+//        mWindowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+//        //设置好悬浮窗的参数
+//        wmParamsDialog = paramsDialog
+//        //这里 如果不设置透明  会导致添加的悬浮框带有黑边 布局文件方面  我将自定义布局没有放在最顶层  而是在外面又套了一层 达到我需要的效果 避免类似自定义dialog宽高显示不正常的情况
+//        wmParamsDialog!!.format = PixelFormat.TRANSPARENT
+//        wmParamsDialog!!.gravity = Gravity.CENTER or Gravity.CENTER_VERTICAL
+////        wmParamsDialog!!.x = 300
+////        wmParamsDialog!!.y = 300
+//        wmParamsDialog!!.width = WindowManager.LayoutParams.MATCH_PARENT
+//        wmParamsDialog!!.height = WindowManager.LayoutParams.MATCH_PARENT
+//        wmParamsDialog!!.format = PixelFormat.OPAQUE
+//        wmParamsDialog!!.alpha = 1.0f
+//        processDialogControls(context)
+//    }
+//
+//    //设置可以显示在状态栏上
+//    //设置悬浮窗口长宽数据
+//    private val paramsDialog: WindowManager.LayoutParams
+//        private get() {
+//            wmParamsDialog = WindowManager.LayoutParams()
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                wmParamsDialog!!.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+//            } else {
+//                wmParamsDialog!!.type = WindowManager.LayoutParams.TYPE_PHONE
+//            }
+//            //设置可以显示在状态栏上
+//            wmParamsDialog!!.flags =
+//                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+//                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
+//                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+//            val screenWidth = ScreenUtils.getScreenWidth()
+//            val screenHeight = ScreenUtils.getScreenHeight()
+//
+//            //设置悬浮窗口长宽数据
+//            wmParamsDialog!!.width = screenWidth
+//            wmParamsDialog!!.height = screenHeight
+//                    wmParams?.horizontalMargin= dip2px(10f).toFloat();
+//            return wmParamsDialog as WindowManager.LayoutParams
+//        }
+//
+//    /**
+//     * 处理弹框控件
+//     */
+//    private fun processDialogControls(context: Context) {
+//        val inflater = LayoutInflater.from(context)
+//        mFloatingLayoutDialog = inflater.inflate(R.layout.dialog_tips, null)
+//        //寻找控件
+//        val tvTips:TextView = mFloatingLayoutDialog?.findViewById(R.id.tv_tips)!!
+//        val tvCancel:TextView = mFloatingLayoutDialog?.findViewById(R.id.tv_cancel)!!
+//        val tvConfirm:TextView = mFloatingLayoutDialog?.findViewById(R.id.tv_confirm)!!
+//
+//        tvTips.text = context.getString(R.string.password_error4_times)
+//        tvCancel.setOnClickListener { v: View? ->
+//            if (mWindowManager != null) {
+//                mWindowManager!!.removeView(mFloatingLayoutDialog)
+//                displayErrorView(false)
+//                verifyCodeEditText.clearInputValue()
+//            }
+//        }
+//        tvConfirm.setOnClickListener { v: View? ->
+//            App.forgotPassword = Constant.SKIP_TO_ERROR_PASSWORD
+//            ActivityUtils.startActivity(MainActivity::class.java)
+//            closeThePasswordBox()
+//        }
+//    }
 }

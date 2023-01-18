@@ -42,6 +42,10 @@ class App : Application(), LifecycleObserver {
     private var top_activity_sl: Activity? = null
 
     companion object {
+        //是否输入成功密码过
+        var whetherEnteredSuccessPassword = false
+        // 加锁，解锁次数
+        var timesLockingAndUnlocking = 0
         //弹框是否正在展示
         var isFrameDisplayed = false
 
@@ -53,7 +57,8 @@ class App : Application(), LifecycleObserver {
 
         // 是否进入后台（三秒后）
         var whetherBackgroundSl = false
-
+        // 是否是跳转权限
+        var whetherJumpPermission = false
         // 原生广告刷新
         var nativeAdRefreshSl = false
         val mmkvSl by lazy {
@@ -112,7 +117,7 @@ class App : Application(), LifecycleObserver {
         job_sl?.cancel()
         job_sl = null
         //从后台切过来，跳转启动页
-        if (whetherBackgroundSl && !isBackDataSl && forgotPassword == Constant.SKIP_TO_NORMAL_PASSWORD) {
+        if (whetherBackgroundSl && !isBackDataSl && forgotPassword == Constant.SKIP_TO_NORMAL_PASSWORD && !whetherJumpPermission) {
             jumpGuidePage()
         }
     }
@@ -138,7 +143,7 @@ class App : Application(), LifecycleObserver {
         top_activity_sl?.startActivity(intent)
     }
 
-    fun setActivityLifecycleSl(application: Application) {
+    private fun setActivityLifecycleSl(application: Application) {
         //注册监听每个activity的生命周期,便于堆栈式管理
         application.registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
