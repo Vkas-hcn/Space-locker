@@ -62,14 +62,14 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
         binding.horProViewSl.setProgressViewUpdateListener(this)
         binding.horProViewSl.setProgressDuration(8000)
         binding.horProViewSl.startProgressAnimation()
-        liveEventBusFs()
+        liveEventBusSl()
         startServiceAndBroadcast()
         getAppList(this)
-        getFirebaseDataFs()
+        getFirebaseDataSl()
         jumpHomePageData()
     }
 
-    private fun liveEventBusFs() {
+    private fun liveEventBusSl() {
         LiveEventBus
             .get(Constant.OPEN_CLOSE_JUMP, Boolean::class.java)
             .observeForever {
@@ -93,7 +93,7 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
         startService(intentOne)
     }
 
-    private fun getFirebaseDataFs() {
+    private fun getFirebaseDataSl() {
         if (BuildConfig.DEBUG) {
             preloadedAdvertisement()
 //            lifecycleScope.launch {
@@ -105,10 +105,10 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
             preloadedAdvertisement()
             val auth = Firebase.remoteConfig
             auth.fetchAndActivate().addOnSuccessListener {
-                MmkvUtils.set(Constant.PROFILE_SL_DATA, auth.getString("FsServiceData"))
-                MmkvUtils.set(Constant.PROFILE_SL_DATA_FAST, auth.getString("FsServiceDataSlst"))
-                MmkvUtils.set(Constant.AROUND_SL_FLOW_DATA, auth.getString("FsAroundFlow_Data"))
-                MmkvUtils.set(Constant.ADVERTISING_SL_DATA, auth.getString("FsAd_Data"))
+                MmkvUtils.set(Constant.PROFILE_SL_DATA, auth.getString("SlServiceData"))
+                MmkvUtils.set(Constant.PROFILE_SL_DATA_FAST, auth.getString("SlServiceDataList"))
+                MmkvUtils.set(Constant.AROUND_SL_FLOW_DATA, auth.getString("SlAroundFlow_Data"))
+                MmkvUtils.set(Constant.ADVERTISING_SL_DATA, auth.getString("SlAd_Data"))
             }
         }
     }
@@ -117,7 +117,7 @@ class StartActivity : BaseActivity<ActivityStartBinding, StartViewModel>(),
     private fun jumpHomePageData() {
         liveJumpHomePage2.observe(this, {
             lifecycleScope.launch(Dispatchers.Main.immediate) {
-                KLog.e("TAG", "isBackDataFs==${App.isBackDataSl}")
+                KLog.e("TAG", "isBackDataSl==${App.isBackDataSl}")
                 delay(300)
                 if (lifecycle.currentState == Lifecycle.State.RESUMED) {
                     jumpPage()

@@ -97,7 +97,6 @@ class SlLoadAppListAd {
         val videoOptions = VideoOptions.Builder()
             .setStartMuted(true)
             .build()
-
         val adOptions = NativeAdOptions.Builder()
             .setVideoOptions(videoOptions)
             .setAdChoicesPlacement(NativeAdOptions.ADCHOICES_TOP_RIGHT)

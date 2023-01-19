@@ -23,7 +23,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.vkas.spacelocker.appsl.App
-import com.vkas.spacelocker.appsl.App.Companion.mmkvSl
 import com.vkas.spacelocker.appsl.slad.SlLoadAppListAd
 import com.vkas.spacelocker.appsl.slad.SlLoadLockAd
 import com.vkas.spacelocker.broadcast.SlBroadcastReceiver
@@ -31,12 +30,10 @@ import com.vkas.spacelocker.enevtsl.Constant
 import com.vkas.spacelocker.enevtsl.Constant.logTagSl
 import com.vkas.spacelocker.uisl.websl.WebSlActivity
 import com.vkas.spacelocker.utils.KLog
-import com.vkas.spacelocker.utils.MmkvUtils
 import com.vkas.spacelocker.utils.SpaceLockerUtils.isThresholdReached
 import com.vkas.spacelocker.widget.LockerDialog
 import com.vkas.spacelocker.widget.PasswordDialog
 import com.vkas.spacelocker.widget.SlLockeringDialog
-import com.xuexiang.xui.utils.Utils
 import com.xuexiang.xutil.tip.ToastUtils
 import kotlinx.coroutines.*
 
@@ -92,7 +89,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     override fun initData() {
         super.initData()
         liveEventBusReceive()
-        viewModel.whetherPopUpPasswordSettingBox(this)
         initRecyclerView()
         createBroadcast()
         SlLoadAppListAd.getInstance().whetherToShowSl = false
@@ -118,11 +114,11 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             .get(Constant.PLUG_SL_ADVERTISEMENT_SHOW, Boolean::class.java)
             .observeForever {
                 KLog.e("state", "插屏关闭接收=${it}")
+                SlLoadLockAd.getInstance().advertisementLoadingSl(this@MainActivity)
                 if(!it){
                     //重复点击
                     jobRepeatClick = lifecycleScope.launch {
                         if (!repeatClick) {
-                            KLog.e("state", "插屏关闭后跳转=${it}")
                             App.timesLockingAndUnlocking = 0
                             lockClickJudgment()
                             repeatClick = true
@@ -153,8 +149,9 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         appListBean = ArrayList()
         SpaceLockerUtils.isOnRight = 0
         appListBean = SpaceLockerUtils.appList
+        appListAdapter = AppListAdapter(appListBean)
+        viewModel.whetherPopUpPasswordSettingBox(this,appListAdapter)
         KLog.e("TAG", "appList---2--${SpaceLockerUtils.appList.size}")
-
         var typeEnum = false
         appListBean.forEach {
             if (it.isLocked) {
@@ -162,7 +159,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             }
         }
         binding.dataEmpty = typeEnum
-        appListAdapter = AppListAdapter(appListBean)
+
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.recAppList.layoutManager = layoutManager
@@ -201,11 +198,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
      * 加锁点击判断
      */
     private fun lockClickJudgment() {
-        if (appListAdapter.data[positionApp].isLocked && !App.whetherEnteredSuccessPassword) {
-            viewModel.clickToPopPasswordBox(this@MainActivity, appListAdapter, positionApp)
-        } else {
             showLockFrame(positionApp)
-        }
     }
 
     /**
@@ -291,6 +284,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         appListBean = list
         appListAdapter.setList(appListBean)
         SpaceLockerUtils.appList=appListBean
+        binding.recAppList.scrollToPosition(0)
     }
 
     /**

@@ -20,7 +20,6 @@ import com.xuexiang.xui.utils.Utils
 import com.xuexiang.xutil.net.JsonUtil
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
-    //初始化服务器数据
     val liveLock: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
     }
@@ -43,13 +42,21 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     /**
      * 是否弹出设置密码框
      */
-    fun whetherPopUpPasswordSettingBox(activity: Activity) {
+    fun whetherPopUpPasswordSettingBox(activity: Activity,appListAdapter: AppListAdapter) {
         if (App.isFrameDisplayed) {
             return
         }
         val data = mmkvSl.decodeString(Constant.LOCK_CODE_SL, "")
         if (Utils.isNullOrEmpty(data)) {
             PasswordDialog(activity, true).show()
+        }else{
+            PasswordDialog(activity, false)
+                .setForgetButton(object : PasswordDialog.OnForgetClickListener {
+                    override fun doForget() {
+                        showClearPasswordPopUp(activity, appListAdapter,-1)
+                    }
+                })
+                .show()
         }
     }
 

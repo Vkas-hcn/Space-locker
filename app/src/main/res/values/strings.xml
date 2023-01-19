@@ -15,4 +15,5 @@
     <string name="are_you_sure_to_reset_them">After resetting the password, all locked apps will be unlocked. You need to manually restore them. Are you sure to reset them？</string>
     <string name="confirm_you_encrypt">confirm that you want to encrypt the set</string>
     <string name="set_password_successful">Set password successful</string>
+    <string name="please_enter_the_correct_password_to_access">Please enter the correct password to access</string>
 </resources>

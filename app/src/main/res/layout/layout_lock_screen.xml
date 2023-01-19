@@ -218,6 +218,7 @@
                     android:gravity="center"
                     android:textColor="#FF333333"
                     android:textSize="14sp"
+                    android:text="@string/please_enter_the_correct_password_to_access"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/img_logo" />
@@ -231,22 +232,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_tips">
-
-                    <TextView
-                        android:id="@+id/tv_cancel"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="14dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_dialog_cancel"
-                        android:gravity="center"
-                        android:paddingStart="30dp"
-                        android:paddingTop="11dp"
-                        android:paddingEnd="30dp"
-                        android:paddingBottom="11dp"
-                        android:text="Cancel"
-                        android:textColor="#FF3694EE"
-                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/tv_confirm"
