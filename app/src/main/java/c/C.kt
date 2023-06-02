@@ -1,4 +1,4 @@
-package sl.wo.ip.uisl.start
+package c
 
 import android.content.Intent
 import android.content.IntentFilter
@@ -10,19 +10,19 @@ import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.LogUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 import sl.wo.ip.R
-import sl.wo.ip.appsl.App
+import b.B
 import sl.wo.ip.basesl.BaseActivity2
 import sl.wo.ip.broadcast.SlBroadcastReceiver
 import sl.wo.ip.databinding.ActivityStartBinding
 import sl.wo.ip.enevtsl.Constant
 import sl.wo.ip.enevtsl.Constant.logTagSl
-import sl.wo.ip.service.LockServiceNew
-import sl.wo.ip.uisl.main.MainActivity
+import d.D
+import e.E
 import sl.wo.ip.utils.SpaceLockerUtils.getAppList
 import com.xuexiang.xui.widget.progress.HorizontalProgressView
 import kotlinx.coroutines.*
 
-class StartActivity : BaseActivity2<ActivityStartBinding>(),
+class C : BaseActivity2<ActivityStartBinding>(),
     HorizontalProgressView.HorizontalProgressUpdateListener {
     companion object {
         var isCurrentPage: Boolean = false
@@ -73,14 +73,14 @@ class StartActivity : BaseActivity2<ActivityStartBinding>(),
         val intentFilter = IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
         //启动广播
         registerReceiver(innerReceiver, intentFilter)
-        val intentOne = Intent(this, LockServiceNew::class.java)
+        val intentOne = Intent(this, D::class.java)
         startService(intentOne)
     }
 
     private fun jumpHomePageData() {
         liveJumpHomePage2.observe(this, {
             lifecycleScope.launch(Dispatchers.Main.immediate) {
-                LogUtils.e("TAG", "isBackDataSl==${App.isBackDataSl}")
+                LogUtils.e("TAG", "isBackDataSl==${B.isBackDataSl}")
                 delay(300)
                 if (lifecycle.currentState == Lifecycle.State.RESUMED) {
                     jumpPage()
@@ -98,7 +98,7 @@ class StartActivity : BaseActivity2<ActivityStartBinding>(),
     private fun jumpPage() {
         // 不是后台切回来的跳转，是后台切回来的直接finish启动页
         if (!isCurrentPage) {
-            val intent = Intent(this@StartActivity, MainActivity::class.java)
+            val intent = Intent(this@C, E::class.java)
             startActivity(intent)
         }
         finish()

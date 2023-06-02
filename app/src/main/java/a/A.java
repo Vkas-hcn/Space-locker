@@ -1,4 +1,4 @@
-package sl.wo.ip.widget;
+package a;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -28,7 +28,7 @@ import com.xuexiang.xui.utils.ResUtils;
 import com.xuexiang.xui.widget.edittext.verify.PwdEditText;
 import com.xuexiang.xui.widget.edittext.verify.TInputConnection;
 
-public class VerifyCodeEditText extends FrameLayout {
+public class A extends FrameLayout {
 
     private static final int DEFAULT_HEIGHT = 50;
 
@@ -79,18 +79,18 @@ public class VerifyCodeEditText extends FrameLayout {
     /**
      * 存储TextView的数据 数量由自定义控件的属性传入
      */
-    private PwdTextView[] mPwdTextViews;
-    private VerifyCodeEditText.InputNumberTextWatcher mTextWatcher = new VerifyCodeEditText.InputNumberTextWatcher();
+    private I[] mPwdTextViews;
+    private A.InputNumberTextWatcher mTextWatcher = new A.InputNumberTextWatcher();
 
-    public VerifyCodeEditText(Context context) {
+    public A(Context context) {
         this(context, null);
     }
 
-    public VerifyCodeEditText(Context context, AttributeSet attrs) {
+    public A(Context context, AttributeSet attrs) {
         this(context, attrs, com.xuexiang.xui.R.attr.VerifyCodeEditTextStyle);
     }
 
-    public VerifyCodeEditText(Context context, AttributeSet attrs, int defStyleAttr) {
+    public A(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr);
     }
@@ -228,9 +228,9 @@ public class VerifyCodeEditText extends FrameLayout {
             etDividerDrawable.setBounds(0, 0, etDividerDrawable.getMinimumWidth(), etDividerDrawable.getMinimumHeight());
             mLlContainer.setDividerDrawable(etDividerDrawable);
         }
-        mPwdTextViews = new PwdTextView[etNumber];
+        mPwdTextViews = new I[etNumber];
         for (int i = 0; i < mPwdTextViews.length; i++) {
-            PwdTextView textView = new PwdTextView(context);
+            I textView = new I(context);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, etTextSize);
 //            textView.setPasswordColor(etTextColor);
             textView.setTextColor(etTextColor);
@@ -310,7 +310,7 @@ public class VerifyCodeEditText extends FrameLayout {
             return;
         }
         for (int i = 0; i < mPwdTextViews.length; i++) {
-            PwdTextView tv = mPwdTextViews[i];
+            I tv = mPwdTextViews[i];
             if ("".equals(tv.getText().toString().trim())) {
                 if (mIsPwd) {
                     tv.drawPassword(mPwdRadius);
@@ -335,7 +335,7 @@ public class VerifyCodeEditText extends FrameLayout {
     // 监听删除
     public void onKeyDelete() {
         for (int i = mPwdTextViews.length - 1; i >= 0; i--) {
-            PwdTextView tv = mPwdTextViews[i];
+            I tv = mPwdTextViews[i];
             if (!"".equals(tv.getText().toString().trim())) {
                 if (mIsPwd) {
                     tv.clearPassword();
@@ -419,7 +419,7 @@ public class VerifyCodeEditText extends FrameLayout {
      */
     @SuppressLint("UseCompatLoadingForDrawables")
     public void setPasswordErrorColor() {
-        for (PwdTextView mPwdTextView : mPwdTextViews) {
+        for (I mPwdTextView : mPwdTextViews) {
             mPwdTextView.setPasswordColor(Color.RED);
             mPwdTextView.setBackgroundDrawable(getContext().getDrawable(R.drawable.bg_password_dis));
         }
@@ -430,7 +430,7 @@ public class VerifyCodeEditText extends FrameLayout {
      */
     @SuppressLint("UseCompatLoadingForDrawables")
     public void setPasswordNormalColor() {
-        for (PwdTextView mPwdTextView : mPwdTextViews) {
+        for (I mPwdTextView : mPwdTextViews) {
             mPwdTextView.setPasswordColor(Color.BLACK);
             mPwdTextView.setBackgroundDrawable(getContext().getDrawable(R.drawable.bg_password));
         }
@@ -483,9 +483,9 @@ public class VerifyCodeEditText extends FrameLayout {
     /**
      * 输入完成 和 删除成功 的监听
      */
-    private VerifyCodeEditText.OnInputListener mOnInputListener;
+    private A.OnInputListener mOnInputListener;
 
-    public void setOnInputListener(VerifyCodeEditText.OnInputListener onInputListener) {
+    public void setOnInputListener(A.OnInputListener onInputListener) {
         mOnInputListener = onInputListener;
     }
 

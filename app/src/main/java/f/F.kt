@@ -1,11 +1,11 @@
-package sl.wo.ip.uisl.vpn
+package f
 
 import com.blankj.utilcode.util.LogUtils
 import sl.wo.ip.R
 import sl.wo.ip.basesl.BaseActivity2
 import sl.wo.ip.databinding.LayoutLockScreenBinding
 
-class VpnActivity: BaseActivity2<LayoutLockScreenBinding>() {
+class F: BaseActivity2<LayoutLockScreenBinding>() {
     override fun getLayoutId(): Int {
         return R.layout.layout_lock_screen
     }

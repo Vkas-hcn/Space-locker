@@ -1,4 +1,4 @@
-package sl.wo.ip.uisl.main
+package e
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -14,8 +14,8 @@ import sl.wo.ip.bean.SlAppBean
 import sl.wo.ip.utils.DebounceUtil
 import sl.wo.ip.utils.SpaceLockerUtils
 
-class AppListAdapter(private val dataList: MutableList<SlAppBean>,val context: Context) :
-    RecyclerView.Adapter<AppListAdapter.ViewHolder>() {
+class N(private val dataList: MutableList<SlAppBean>,val context: Context) :
+    RecyclerView.Adapter<N.ViewHolder>() {
     val debounceUtil = DebounceUtil(1000) // 设置延迟时间为 1000 毫秒
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

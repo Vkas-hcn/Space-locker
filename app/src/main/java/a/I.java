@@ -1,4 +1,4 @@
-package sl.wo.ip.widget;
+package a;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,22 +8,22 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
-public class PwdTextView extends AppCompatTextView {
+public class I extends AppCompatTextView {
 
     private float mRadius;
     private boolean mHasPassword;
 
     private Paint mPaint;
 
-    public PwdTextView(Context context) {
+    public I(Context context) {
         this(context, null);
     }
 
-    public PwdTextView(Context context, AttributeSet attrs) {
+    public I(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PwdTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public I(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initPaint();
     }

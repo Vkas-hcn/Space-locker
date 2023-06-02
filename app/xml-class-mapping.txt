@@ -1,0 +1,24 @@
+dir mapping:
+	sl.wo.ip.widget -> a
+	sl.wo.ip.appsl -> b
+	sl.wo.ip.uisl.start -> c
+	sl.wo.ip.service -> d
+	sl.wo.ip.uisl.main -> e
+	sl.wo.ip.uisl.vpn -> f
+	sl.wo.ip.uisl.websl -> g
+
+class mapping:
+	sl.wo.ip.widget.VerifyCodeEditText -> a.A
+	sl.wo.ip.appsl.App -> b.B
+	sl.wo.ip.uisl.start.StartActivity -> c.C
+	sl.wo.ip.service.LockServiceNew -> d.D
+	sl.wo.ip.uisl.main.MainActivity -> e.E
+	sl.wo.ip.uisl.vpn.VpnActivity -> f.F
+	sl.wo.ip.uisl.websl.WebSlActivity -> g.G
+	sl.wo.ip.widget.SlLockeringDialog -> a.H
+	sl.wo.ip.widget.PwdTextView -> a.I
+	sl.wo.ip.widget.LockerDialog -> a.J
+	sl.wo.ip.widget.PasswordDialog -> a.K
+	sl.wo.ip.uisl.start.StartViewFun -> c.L
+	sl.wo.ip.uisl.main.MainViewFun -> e.M
+	sl.wo.ip.uisl.main.AppListAdapter -> e.N

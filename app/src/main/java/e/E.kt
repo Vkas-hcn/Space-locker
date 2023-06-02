@@ -1,4 +1,4 @@
-package sl.wo.ip.uisl.main
+package e
 
 import android.app.AppOpsManager
 import android.content.Context
@@ -18,22 +18,22 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.LogUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
-import sl.wo.ip.appsl.App
+import b.B
 import sl.wo.ip.basesl.BaseActivity2
 import sl.wo.ip.broadcast.SlBroadcastReceiver
 import sl.wo.ip.enevtsl.Constant
-import sl.wo.ip.uisl.websl.WebSlActivity
+import g.G
 import sl.wo.ip.utils.DebounceUtil
-import sl.wo.ip.widget.LockerDialog
-import sl.wo.ip.widget.PasswordDialog
-import sl.wo.ip.widget.SlLockeringDialog
+import a.J
+import a.K
+import a.H
 import com.xuexiang.xutil.tip.ToastUtils
 import kotlinx.coroutines.*
 
 
-class MainActivity : BaseActivity2<ActivityMainBinding>() {
+class E : BaseActivity2<ActivityMainBinding>() {
     private lateinit var appListBean: MutableList<SlAppBean>
-    private lateinit var appListAdapter: AppListAdapter
+    private lateinit var appListAdapter: N
     private var lockFrameJob: Job? = null
 
 
@@ -73,8 +73,8 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
         liveEventBusReceive()
         initRecyclerView()
         createBroadcast()
-        MainViewFun.liveLock.observe(this, {
-            App.whetherEnteredSuccessPassword = true
+        M.liveLock.observe(this, {
+            B.whetherEnteredSuccessPassword = true
             showLockFrame(it)
         })
     }
@@ -91,7 +91,7 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
 
     private fun clickFun(position: Int) {
         LogUtils.e("TAG", "setOnItemChildClickListener-11111")
-        if (!Settings.canDrawOverlays(this@MainActivity)
+        if (!Settings.canDrawOverlays(this@E)
         ) {
             LogUtils.e("TAG", "setOnItemChildClickListener-q")
 
@@ -113,8 +113,8 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
         appListBean = ArrayList()
         SpaceLockerUtils.isOnRight = 0
         appListBean = SpaceLockerUtils.appList
-        appListAdapter = AppListAdapter(appListBean, this)
-        MainViewFun.whetherPopUpPasswordSettingBox(this, appListAdapter)
+        appListAdapter = N(appListBean, this)
+        M.whetherPopUpPasswordSettingBox(this, appListAdapter)
         LogUtils.e("TAG", "appList---2--${SpaceLockerUtils.appList.size}")
         var typeEnum = false
         appListBean.forEach {
@@ -128,7 +128,7 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
         binding.recAppList.layoutManager = layoutManager
         binding.recAppList.adapter = appListAdapter
 
-        appListAdapter.setOnItemClickListener(object : AppListAdapter.OnItemClickListener {
+        appListAdapter.setOnItemClickListener(object : N.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 clickFun(position)
             }
@@ -147,12 +147,12 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
      */
     private fun showLockFrame(position: Int) {
         lockFrameJob = lifecycleScope.launch {
-            SlLockeringDialog(this@MainActivity).show()
+            H(this@E).show()
             delay(1000)
             appListBean.getOrNull(position)?.isLocked =
                 appListBean.getOrNull(position)?.isLocked != true
             sortApplicationToEmptyList()
-            MainViewFun.storeLockedApplications(appListBean)
+            M.storeLockedApplications(appListBean)
         }
     }
 
@@ -261,7 +261,7 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
                 }
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
-            App.whetherJumpPermission = true
+            B.whetherJumpPermission = true
         }
     }
 
@@ -271,7 +271,7 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
                 data = "package:${applicationContext.packageName}".toUri()
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
-            App.whetherJumpPermission = true
+            B.whetherJumpPermission = true
         }
     }
 
@@ -283,16 +283,16 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
         }
 
         fun toSetPassword() {
-            App.forgotPassword = Constant.SKIP_TO_NORMAL_PASSWORD
+            B.forgotPassword = Constant.SKIP_TO_NORMAL_PASSWORD
             binding.sidebarShowsSL = false
-            LockerDialog(this@MainActivity)
+            J(this@E)
                 .setMessage(getString(R.string.are_you_sure_to_reset_them))
-                ?.setConfirmButton(object : LockerDialog.OnConfirmClickListener {
+                ?.setConfirmButton(object : J.OnConfirmClickListener {
                     override fun doConfirm() {
                         SpaceLockerUtils.clearApplicationData()
                         appListAdapter.notifyDataSetChanged()
-                        App.whetherJumpPermission = true
-                        PasswordDialog(this@MainActivity, true).show()
+                        B.whetherJumpPermission = true
+                        K(this@E, true).show()
                     }
                 })
                 ?.show()
@@ -313,7 +313,7 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
         }
 
         fun toPrivacyPolicy() {
-            val intent = Intent(this@MainActivity, WebSlActivity::class.java)
+            val intent = Intent(this@E, G::class.java)
             startActivity(intent)
         }
 
@@ -322,7 +322,7 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
             intent.action = Intent.ACTION_SEND
             intent.putExtra(
                 Intent.EXTRA_TEXT,
-                Constant.SHARE_SL_ADDRESS + this@MainActivity.packageName
+                Constant.SHARE_SL_ADDRESS + this@E.packageName
             )
             intent.type = "text/plain"
             startActivity(intent)
@@ -337,17 +337,17 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
         if (appListBean.isEmpty()) {
             sortApplicationToEmptyList()
         }
-        if (App.forgotPassword == Constant.SKIP_TO_NORMAL_PASSWORD) {
+        if (B.forgotPassword == Constant.SKIP_TO_NORMAL_PASSWORD) {
             LogUtils.e("TAG", "onResume-----1")
-            MainViewFun.noPasswordSetPassword(this)
+            M.noPasswordSetPassword(this)
         }
-        if (App.forgotPassword == Constant.SKIP_TO_ERROR_PASSWORD) {
+        if (B.forgotPassword == Constant.SKIP_TO_ERROR_PASSWORD) {
             LogUtils.e("TAG", "onResume-----2")
-            MainViewFun.showSettingPasswordPopUp(this)
+            M.showSettingPasswordPopUp(this)
         }
-        if (App.forgotPassword == Constant.SKIP_TO_FORGET_PASSWORD) {
+        if (B.forgotPassword == Constant.SKIP_TO_FORGET_PASSWORD) {
             LogUtils.e("TAG", "onResume-----3")
-            MainViewFun.showClearPasswordPopUp(this, appListAdapter, -1)
+            M.showClearPasswordPopUp(this, appListAdapter, -1)
         }
     }
 
@@ -358,8 +358,8 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        App.isFrameDisplayed = false
-        App.whetherEnteredSuccessPassword = false
+        B.isFrameDisplayed = false
+        B.whetherEnteredSuccessPassword = false
     }
 
 

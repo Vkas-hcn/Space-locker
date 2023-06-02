@@ -9,13 +9,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import sl.wo.ip.R
-import sl.wo.ip.appsl.App.Companion.mmkvSl
+import b.B.Companion.mmkvSl
 import sl.wo.ip.enevtsl.Constant
-import sl.wo.ip.widget.VerifyCodeEditText
+import a.A
 import com.xuexiang.xui.utils.Utils
 import com.xuexiang.xutil.display.ScreenUtils
 
-class LockWindow : VerifyCodeEditText.OnInputListener {
+class LockWindow : A.OnInputListener {
     companion object {
         fun getInstance() = InstanceHelper.lockWindowHelper
     }
@@ -32,7 +32,7 @@ class LockWindow : VerifyCodeEditText.OnInputListener {
 //    var mFloatingLayoutDialog: View? = null
     private lateinit var context: Context
 
-    private lateinit var verifyCodeEditText: VerifyCodeEditText
+    private lateinit var verifyCodeEditText: A
     private lateinit var img1: ImageView
     private lateinit var img2: ImageView
     private lateinit var img3: ImageView

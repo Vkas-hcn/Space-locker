@@ -1,0 +1,4 @@
+package c
+
+object L {
+}

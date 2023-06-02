@@ -1,4 +1,4 @@
-package sl.wo.ip.uisl.websl
+package g
 
 import android.graphics.Bitmap
 import android.net.http.SslError
@@ -13,7 +13,7 @@ import sl.wo.ip.basesl.BaseActivity2
 import sl.wo.ip.databinding.ActivityWebSlBinding
 import sl.wo.ip.enevtsl.Constant
 
-class WebSlActivity : BaseActivity2<ActivityWebSlBinding>() {
+class G : BaseActivity2<ActivityWebSlBinding>() {
 
     override fun getLayoutId(): Int {
         return R.layout.activity_web_sl

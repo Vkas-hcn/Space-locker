@@ -1,4 +1,4 @@
-package sl.wo.ip.widget
+package a
 
 import android.app.Activity
 import android.app.Dialog
@@ -12,7 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import sl.wo.ip.R
 import java.util.*
-class LockerDialog : Dialog, View.OnClickListener{
+class J : Dialog, View.OnClickListener{
     private var mActivity: Activity? = null
     private var onCancelClickListener: OnCancelClickListener? = null
 
@@ -45,19 +45,19 @@ class LockerDialog : Dialog, View.OnClickListener{
         initView()
     }
 
-    fun setMessage(message: String): LockerDialog? {
+    fun setMessage(message: String): J? {
         this.message = message
         return this
     }
-    fun setConfirmTv(message: String): LockerDialog? {
+    fun setConfirmTv(message: String): J? {
         this.confirmTv = message
         return this
     }
-    fun setCancelButton(onClickListener: OnCancelClickListener?): LockerDialog {
+    fun setCancelButton(onClickListener: OnCancelClickListener?): J {
         this.onCancelClickListener = onClickListener
         return this
     }
-    fun setConfirmButton(onClickListener: OnConfirmClickListener?): LockerDialog {
+    fun setConfirmButton(onClickListener: OnConfirmClickListener?): J {
         this.onConfirmClickListener = onClickListener
         return this
     }

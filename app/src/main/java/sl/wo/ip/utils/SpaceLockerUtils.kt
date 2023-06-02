@@ -10,14 +10,14 @@ import com.blankj.utilcode.util.LogUtils
 import sl.wo.ip.bean.SlAppBean
 import sl.wo.ip.enevtsl.Constant
 import com.google.gson.reflect.TypeToken
-import sl.wo.ip.appsl.App.Companion.mmkvSl
+import b.B.Companion.mmkvSl
 import com.xuexiang.xui.utils.Utils
 import com.xuexiang.xutil.net.JsonUtil
 
 object SpaceLockerUtils {
     //应用列表
     var appList:MutableList<SlAppBean> = ArrayList()
-    //是否在右边（在App列表界面）
+    //是否在右边（在B列表界面）
     var isOnRight:Int = 0
     /**
      * 获取应用列表

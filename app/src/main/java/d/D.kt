@@ -1,4 +1,4 @@
-package sl.wo.ip.service
+package d
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -18,7 +18,7 @@ import sl.wo.ip.utils.SpaceLockerUtils
 import com.xuexiang.xui.utils.Utils
 import kotlinx.coroutines.*
 
-class LockServiceNew : Service() {
+class D : Service() {
     private var mLockJob: Job? = null
 
     override fun onCreate() {

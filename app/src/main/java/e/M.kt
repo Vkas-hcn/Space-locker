@@ -1,24 +1,24 @@
-package sl.wo.ip.uisl.main
+package e
 
 import android.app.Activity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.blankj.utilcode.util.LogUtils
 import sl.wo.ip.R
-import sl.wo.ip.appsl.App
-import sl.wo.ip.appsl.App.Companion.mmkvSl
+import b.B
+import b.B.Companion.mmkvSl
 import sl.wo.ip.bean.SlAppBean
 import sl.wo.ip.enevtsl.Constant
 import sl.wo.ip.utils.MmkvUtils
 import sl.wo.ip.utils.SpaceLockerUtils
 import sl.wo.ip.utils.SpaceLockerUtils.clearApplicationData
 import sl.wo.ip.utils.SpaceLockerUtils.updateLockedContent
-import sl.wo.ip.widget.LockerDialog
-import sl.wo.ip.widget.PasswordDialog
+import a.J
+import a.K
 import com.xuexiang.xui.utils.Utils
 import com.xuexiang.xutil.net.JsonUtil
 
-object MainViewFun:ViewModel() {
+object M:ViewModel() {
     val liveLock: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
     }
@@ -40,16 +40,16 @@ object MainViewFun:ViewModel() {
     /**
      * 是否弹出设置密码框
      */
-    fun whetherPopUpPasswordSettingBox(activity: Activity,appListAdapter: AppListAdapter) {
-        if (App.isFrameDisplayed) {
+    fun whetherPopUpPasswordSettingBox(activity: Activity,appListAdapter: N) {
+        if (B.isFrameDisplayed) {
             return
         }
         val data = mmkvSl.decodeString(Constant.LOCK_CODE_SL, "")
         if (Utils.isNullOrEmpty(data)) {
-            PasswordDialog(activity, true).show()
+            K(activity, true).show()
         }else{
-            PasswordDialog(activity, false)
-                .setForgetButton(object : PasswordDialog.OnForgetClickListener {
+            K(activity, false)
+                .setForgetButton(object : K.OnForgetClickListener {
                     override fun doForget() {
                         showClearPasswordPopUp(activity, appListAdapter,-1)
                     }
@@ -61,37 +61,37 @@ object MainViewFun:ViewModel() {
     /**
      * 展示清除密码弹框
      */
-    fun showClearPasswordPopUp(activity: Activity, appListAdapter: AppListAdapter,pos: Int) {
+    fun showClearPasswordPopUp(activity: Activity, appListAdapter: N,pos: Int) {
         LogUtils.e("TAG", "展示清除密码弹框-----1")
-        LockerDialog(activity)
+        J(activity)
             .setMessage(activity.getString(R.string.are_you_sure_to_reset_them))
-            ?.setCancelButton(object : LockerDialog.OnCancelClickListener {
+            ?.setCancelButton(object : J.OnCancelClickListener {
                 override fun doCancel() {
                     unlockJump(activity, appListAdapter,pos)
                 }
             })
-            ?.setConfirmButton(object : LockerDialog.OnConfirmClickListener {
+            ?.setConfirmButton(object : J.OnConfirmClickListener {
                 override fun doConfirm() {
                     clearApplicationData()
                     appListAdapter.notifyDataSetChanged()
-                    if (App.isFrameDisplayed) {
+                    if (B.isFrameDisplayed) {
                         return
                     }
-                    PasswordDialog(activity, true).show()
+                    K(activity, true).show()
                 }
             })
             ?.show()
-        App.forgotPassword = Constant.SKIP_TO_NORMAL_PASSWORD
+        B.forgotPassword = Constant.SKIP_TO_NORMAL_PASSWORD
     }
 
     /**
      * 展示设置密码弹框
      */
     fun showSettingPasswordPopUp(activity: Activity) {
-        if (App.isFrameDisplayed) {
+        if (B.isFrameDisplayed) {
             return
         }
-        PasswordDialog(activity, true).show()
+        K(activity, true).show()
     }
 
     /**
@@ -99,22 +99,22 @@ object MainViewFun:ViewModel() {
      */
     fun noPasswordSetPassword(activity: Activity) {
         LogUtils.e("TAG", "展示首页密码弹框----1")
-        if (App.isFrameDisplayed) {
+        if (B.isFrameDisplayed) {
             return
         }
         LogUtils.e("TAG", "展示首页密码弹框----2")
         if (Utils.isNullOrEmpty(mmkvSl.getString(Constant.LOCK_CODE_SL, ""))) {
-            App.isFrameDisplayed = true
-            LogUtils.e("TAG"," App.isFrameDisplayed==${ App.isFrameDisplayed}")
-            PasswordDialog(activity, true).show()
+            B.isFrameDisplayed = true
+            LogUtils.e("TAG"," B.isFrameDisplayed==${ B.isFrameDisplayed}")
+            K(activity, true).show()
         }
     }
 
     /**
      * 点击弹出密码弹框
      */
-    fun clickToPopPasswordBox(activity: Activity, appListAdapter: AppListAdapter, pos: Int) {
-        if (App.isFrameDisplayed) {
+    fun clickToPopPasswordBox(activity: Activity, appListAdapter: N, pos: Int) {
+        if (B.isFrameDisplayed) {
             return
         }
         unlockJump(activity, appListAdapter, pos)
@@ -124,17 +124,17 @@ object MainViewFun:ViewModel() {
     /**
      * 解锁跳转
      */
-    private fun unlockJump(activity: Activity, appListAdapter: AppListAdapter, pos: Int) {
-        if (App.isFrameDisplayed) {
+    private fun unlockJump(activity: Activity, appListAdapter: N, pos: Int) {
+        if (B.isFrameDisplayed) {
             return
         }
-        PasswordDialog(activity, false)
-            .setForgetButton(object : PasswordDialog.OnForgetClickListener {
+        K(activity, false)
+            .setForgetButton(object : K.OnForgetClickListener {
                 override fun doForget() {
                     showClearPasswordPopUp(activity, appListAdapter,pos)
                 }
             })
-            .setFinishButton(object : PasswordDialog.OnFinishClickListener {
+            .setFinishButton(object : K.OnFinishClickListener {
                 override fun doFinish() {
                     if(pos!=-1){
                         liveLock.postValue(pos)

@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
     <application
-        android:name="sl.wo.ip.appsl.App"
+        android:name="b.B"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,7 +22,7 @@
             android:value="ca-app-pub-3940256099942544~3347511713" />
 
         <activity
-            android:name="sl.wo.ip.uisl.start.StartActivity"
+            android:name="c.C"
             android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -34,19 +34,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="sl.wo.ip.service.LockServiceNew"/>
+        <service android:name="d.D"/>
         <activity
-            android:name="sl.wo.ip.uisl.main.MainActivity"
+            android:name="e.E"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="sl.wo.ip.uisl.vpn.VpnActivity"
+            android:name="f.F"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="sl.wo.ip.uisl.websl.WebSlActivity"
+            android:name="g.G"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />

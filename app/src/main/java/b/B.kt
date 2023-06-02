@@ -1,4 +1,4 @@
-package sl.wo.ip.appsl
+package b
 
 import android.app.Activity
 import android.app.Application
@@ -13,7 +13,7 @@ import com.blankj.utilcode.util.LogUtils
 import com.google.android.gms.ads.MobileAds
 import com.tencent.mmkv.MMKV
 import sl.wo.ip.enevtsl.Constant
-import sl.wo.ip.uisl.start.StartActivity
+import c.C
 import com.blankj.utilcode.util.ProcessUtils
 import com.google.android.gms.ads.AdActivity
 import com.google.firebase.FirebaseApp
@@ -27,7 +27,7 @@ import com.xuexiang.xutil.XUtil
 import kotlinx.coroutines.*
 
 
-class App : Application(), LifecycleObserver {
+class B : Application(), LifecycleObserver {
     private var flag = 0
     private var job_sl: Job? = null
     private var ad_activity_sl: Activity? = null
@@ -94,7 +94,7 @@ class App : Application(), LifecycleObserver {
             whetherBackgroundSl = true
             ad_activity_sl?.finish()
 
-            ActivityStackManager.finishActivity(StartActivity())
+            ActivityStackManager.finishActivity(C())
         }
     }
 
@@ -103,7 +103,7 @@ class App : Application(), LifecycleObserver {
      */
     private fun jumpGuidePage() {
         whetherBackgroundSl = false
-        val intent = Intent(top_activity_sl, StartActivity::class.java)
+        val intent = Intent(top_activity_sl, C::class.java)
         intent.putExtra(Constant.RETURN_SL_CURRENT_PAGE, true)
         top_activity_sl?.startActivity(intent)
     }

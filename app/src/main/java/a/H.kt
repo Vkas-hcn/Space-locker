@@ -1,4 +1,4 @@
-package sl.wo.ip.widget
+package a
 
 import android.app.Activity
 import android.app.Dialog
@@ -13,7 +13,7 @@ import sl.wo.ip.R
 import com.xuexiang.xui.widget.progress.HorizontalProgressView
 import java.util.*
 
-class SlLockeringDialog : Dialog, HorizontalProgressView.HorizontalProgressUpdateListener {
+class H : Dialog, HorizontalProgressView.HorizontalProgressUpdateListener {
     private var mContext: Context? = null
 
     private var onProgressFinishedListener: OnProgressFinishedListener? = null
@@ -35,7 +35,7 @@ class SlLockeringDialog : Dialog, HorizontalProgressView.HorizontalProgressUpdat
         initView()
     }
 
-    fun setProgressFinishedButton(onClickListener: OnProgressFinishedListener?): SlLockeringDialog {
+    fun setProgressFinishedButton(onClickListener: OnProgressFinishedListener?): H {
         this.onProgressFinishedListener = onClickListener
         return this
     }
