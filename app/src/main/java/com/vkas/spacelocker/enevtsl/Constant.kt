@@ -1,8 +1,6 @@
 package com.vkas.spacelocker.enevtsl
 
 object Constant {
-    // 是否刷新原生广告
-    const val WHETHER_REFRESH_NATIVE_AD = "whetherRefreshNativeAd"
     // 是否刷新加锁列表
     const val REFRESH_LOCK_LIST = "refreshLockList"
     // 跳转忘记密码
@@ -27,48 +25,15 @@ object Constant {
     // email
     const val MAILBOX_SL_ADDRESS="vkas@qq.com"
     const val RETURN_SL_CURRENT_PAGE ="returnSlCurrentPage"
-    // 广告数据
-    const val ADVERTISING_SL_DATA="advertisingSlData"
-    // 广告包名
-    const val ADVERTISING_SL_PACKAGE="com.google.android.gms.ads.AdActivity"
-    // 当日日期
-    const val CURRENT_SL_DATE="currentSlDate"
-    // 点击次数
-    const val CLICKS_SL_COUNT="clicksSlCount"
-    // 展示次数
-    const val SHOW_SL_COUNT="showSlCount"
+
+
     //日志tag
     const val logTagSl = "logTagSl"
     //开屏关闭跳转
     const val OPEN_CLOSE_JUMP = "openCloseJump"
-    //计时器数据
-    const val TIMER_SL_DATA = "timerSlData"
-    // 最后时间
-    const val LAST_TIME = "lastTime"
-    //服务器信息
-    const val SERVER_SL_INFORMATION = "serverSlInformation"
-    //连接状态
-    const val CONNECTION_SL_STATUS = "connectionSlStatus"
-    //绕流数据
-    const val AROUND_SL_FLOW_DATA = "aroundSlFlowData"
-    // 服务器数据
-    const val PROFILE_SL_DATA ="profileSlData"
-    // 最佳服务器
-    const val PROFILE_SL_DATA_FAST ="profileSlDataFast"
-    // 是否已连接
-    const val WHETHER_SL_CONNECTED="whetherSlConnected"
-    // 当前服务器
-    const val CURRENT_SL_SERVICE="currentSlService"
-    // lock插屏广告展示
-    const val PLUG_SL_ADVERTISEMENT_SHOW="plugSlAdvertisementShow"
-    // Faster server
-    const val FASTER_SL_SERVER= "Faster server"
-    //ip信息
-    const val IP_INFORMATION= "ipInformation"
-    // 已连接返回
-    const val CONNECTED_SL_RETURN="connectedSlReturn"
-    // 未连接返回
-    const val NOT_CONNECTED_SL_RETURN="notConnectedSlReturn"
+
+
+
 
     const val LOCK_IS_INIT_DB = "lock_is_init_db" //是否初始化了数据库表
 

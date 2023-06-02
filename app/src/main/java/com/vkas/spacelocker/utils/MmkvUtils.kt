@@ -1,4 +1,5 @@
 package com.vkas.spacelocker.utils
+import com.blankj.utilcode.util.LogUtils
 import com.tencent.mmkv.MMKV
 object MmkvUtils {
     private val TAG = MmkvUtils::class.java.simpleName
@@ -14,7 +15,7 @@ object MmkvUtils {
     }
 
     fun putStringValue(name: String, value: String) {
-        KLog.e("MMkV====$name:$value")
+        LogUtils.e("MMkV====$name:$value")
         MMKV.defaultMMKV().encode(name, value)
     }
 

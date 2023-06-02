@@ -1,34 +1,27 @@
-package com.vkas.spacelocker.broadcast;
+package com.vkas.spacelocker.broadcast
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
+import android.content.BroadcastReceiver
+import android.content.Context
+import com.vkas.spacelocker.utils.LockWindow.InstanceHelper.lockWindowHelper
+import android.content.Intent
 
-import com.vkas.spacelocker.utils.KLog;
-import com.vkas.spacelocker.utils.LockWindow;
-
-public class SlBroadcastReceiver extends BroadcastReceiver {
-    private final String SYSTEM_DIALOG_REASON_KEY = "reason";
-    private final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
-    private final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps";
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
-        if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
-            String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
-
-            if (reason == null)
-                return;
+class SlBroadcastReceiver : BroadcastReceiver() {
+    private val SYSTEM_DIALOG_REASON_KEY = "reason"
+    private val SYSTEM_DIALOG_REASON_HOME_KEY = "homekey"
+    private val SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps"
+    override fun onReceive(context: Context, intent: Intent) {
+        val action = intent.action
+        if (action == Intent.ACTION_CLOSE_SYSTEM_DIALOGS) {
+            val reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY) ?: return
 
             // Home键
-            if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
-                LockWindow.InstanceHelper.INSTANCE.getLockWindowHelper().closeThePasswordBox();
+            if (reason == SYSTEM_DIALOG_REASON_HOME_KEY) {
+                lockWindowHelper.closeThePasswordBox()
             }
 
             // 最近任务列表键
-            if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
-                LockWindow.InstanceHelper.INSTANCE.getLockWindowHelper().closeThePasswordBox();
+            if (reason == SYSTEM_DIALOG_REASON_RECENT_APPS) {
+                lockWindowHelper.closeThePasswordBox()
             }
         }
     }

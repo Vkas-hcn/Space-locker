@@ -9,11 +9,11 @@ import android.os.Bundle
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.TextView
+import com.blankj.utilcode.util.LogUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.vkas.spacelocker.R
 import com.vkas.spacelocker.appsl.App
 import com.vkas.spacelocker.enevtsl.Constant
-import com.vkas.spacelocker.utils.KLog
 import com.vkas.spacelocker.utils.MmkvUtils
 import com.vkas.spacelocker.utils.SpaceLockerUtils
 import com.vkas.spacelocker.utils.SpaceLockerUtils.clearApplicationData
@@ -199,8 +199,6 @@ class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputL
             } else {
                 dismiss()
                 App.isFrameDisplayed = false
-                LiveEventBus.get<Boolean>(Constant.WHETHER_REFRESH_NATIVE_AD)
-                    .post(true)
                 if (App.forgotPassword == Constant.SKIP_TO_ERROR_PASSWORD) {
                     this.mContext?.let { it ->
                         LockerDialog(it)
@@ -253,12 +251,10 @@ class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputL
         if (Utils.isNullOrEmpty(data)) {
             return
         }
-        KLog.e("TAG", "inputValue----->${verifyCodeEditText.inputValue}")
+        LogUtils.e("TAG", "inputValue----->${verifyCodeEditText.inputValue}")
         if (input == data) {
             dismiss()
             App.isFrameDisplayed = false
-            LiveEventBus.get<Boolean>(Constant.WHETHER_REFRESH_NATIVE_AD)
-                .post(true)
             if (onFinishClickListener != null) {
                 onFinishClickListener!!.doFinish()
             }
@@ -292,7 +288,7 @@ class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputL
     }
 
     override fun onComplete(input: String?) {
-        KLog.e("TAG", "onComplete----->${input}")
+        LogUtils.e("TAG", "onComplete----->${input}")
         if (App.forgotPassword == Constant.SKIP_TO_NORMAL_PASSWORD) {
             if (Utils.isNullOrEmpty(App.mmkvSl.getString(Constant.LOCK_CODE_SL, ""))) {
                 setPassword(input)
@@ -324,34 +320,26 @@ class PasswordDialog : Dialog, View.OnClickListener, VerifyCodeEditText.OnInputL
      * 显示错误view
      */
     private fun displayErrorView(isErrorView: Boolean) {
-        if (isErrorView) {
+        val imageResources = if (isErrorView) {
             verifyCodeEditText.setPasswordErrorColor()
-            img0.setImageResource(R.mipmap.ic_0_dis)
-            img1.setImageResource(R.mipmap.ic_1_dis)
-            img2.setImageResource(R.mipmap.ic_2_dis)
-            img3.setImageResource(R.mipmap.ic_3_dis)
-            img4.setImageResource(R.mipmap.ic_4_dis)
-            img5.setImageResource(R.mipmap.ic_5_dis)
-            img6.setImageResource(R.mipmap.ic_6_dis)
-            img7.setImageResource(R.mipmap.ic_7_dis)
-            img8.setImageResource(R.mipmap.ic_8_dis)
-            img9.setImageResource(R.mipmap.ic_9_dis)
-            imgX.setImageResource(R.mipmap.ic_x_dis)
-            imgEn.setImageResource(R.mipmap.ic_en_dis)
+            listOf(
+                R.mipmap.ic_0_dis, R.mipmap.ic_1_dis, R.mipmap.ic_2_dis, R.mipmap.ic_3_dis,
+                R.mipmap.ic_4_dis, R.mipmap.ic_5_dis, R.mipmap.ic_6_dis, R.mipmap.ic_7_dis,
+                R.mipmap.ic_8_dis, R.mipmap.ic_9_dis, R.mipmap.ic_x_dis, R.mipmap.ic_en_dis
+            )
         } else {
             verifyCodeEditText.setPasswordNormalColor()
-            img0.setImageResource(R.mipmap.ic_0)
-            img1.setImageResource(R.mipmap.ic_1)
-            img2.setImageResource(R.mipmap.ic_2)
-            img3.setImageResource(R.mipmap.ic_3)
-            img4.setImageResource(R.mipmap.ic_4)
-            img5.setImageResource(R.mipmap.ic_5)
-            img6.setImageResource(R.mipmap.ic_6)
-            img7.setImageResource(R.mipmap.ic_7)
-            img8.setImageResource(R.mipmap.ic_8)
-            img9.setImageResource(R.mipmap.ic_9)
-            imgX.setImageResource(R.mipmap.ic_x)
-            imgEn.setImageResource(R.mipmap.ic_en)
+            listOf(
+                R.mipmap.ic_0, R.mipmap.ic_1, R.mipmap.ic_2, R.mipmap.ic_3,
+                R.mipmap.ic_4, R.mipmap.ic_5, R.mipmap.ic_6, R.mipmap.ic_7,
+                R.mipmap.ic_8, R.mipmap.ic_9, R.mipmap.ic_x, R.mipmap.ic_en
+            )
         }
+        listOf(img0, img1, img2, img3, img4, img5, img6, img7, img8, img9, imgX, imgEn)
+            .zip(imageResources)
+            .forEach { (imageView, imageResource) ->
+                imageView.setImageResource(imageResource)
+            }
     }
+
 }

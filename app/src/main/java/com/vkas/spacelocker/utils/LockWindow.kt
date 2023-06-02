@@ -1,32 +1,18 @@
 package com.vkas.spacelocker.utils
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import com.vkas.spacelocker.utils.KLog.e
-import com.vkas.spacelocker.utils.KLog
 import android.graphics.PixelFormat
 import android.os.Build
-import android.os.Bundle
+import android.util.Log.e
 import android.view.*
-import android.view.View.OnTouchListener
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.blankj.utilcode.util.ActivityUtils.startActivity
 import com.vkas.spacelocker.R
-import com.vkas.spacelocker.appsl.App
 import com.vkas.spacelocker.appsl.App.Companion.mmkvSl
 import com.vkas.spacelocker.enevtsl.Constant
-import com.vkas.spacelocker.uisl.main.MainActivity
-import com.vkas.spacelocker.uisl.start.StartActivity
-import com.vkas.spacelocker.widget.LockerDialog
 import com.vkas.spacelocker.widget.VerifyCodeEditText
 import com.xuexiang.xui.utils.Utils
-import com.xuexiang.xutil.XUtil
-import com.xuexiang.xutil.app.ActivityUtils
-import com.xuexiang.xutil.display.DensityUtils.dip2px
 import com.xuexiang.xutil.display.ScreenUtils
 
 class LockWindow : VerifyCodeEditText.OnInputListener {

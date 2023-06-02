@@ -2,31 +2,24 @@ package com.vkas.spacelocker.uisl.websl
 
 import android.graphics.Bitmap
 import android.net.http.SslError
-import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.SslErrorHandler
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.vkas.spacelocker.BR
 import com.vkas.spacelocker.R
-import com.vkas.spacelocker.basesl.BaseActivity
-import com.vkas.spacelocker.basesl.BaseViewModel
+import com.vkas.spacelocker.basesl.BaseActivity2
 import com.vkas.spacelocker.databinding.ActivityWebSlBinding
 import com.vkas.spacelocker.enevtsl.Constant
 
-class WebSlActivity : BaseActivity<ActivityWebSlBinding, BaseViewModel>() {
-    override fun initContentView(savedInstanceState: Bundle?): Int {
+class WebSlActivity : BaseActivity2<ActivityWebSlBinding>() {
+
+    override fun getLayoutId(): Int {
         return R.layout.activity_web_sl
     }
 
-    override fun initVariableId(): Int {
-        return BR._all
-    }
-
-    override fun initToolbar() {
-        super.initToolbar()
+    override fun setupViews() {
         binding.webTitleSl.imgLeft.visibility = View.VISIBLE
         binding.webTitleSl.imgLeft.setImageResource(R.drawable.ic_title_back)
 
@@ -36,8 +29,7 @@ class WebSlActivity : BaseActivity<ActivityWebSlBinding, BaseViewModel>() {
         binding.webTitleSl.imgMiddle.visibility = View.GONE
     }
 
-    override fun initData() {
-        super.initData()
+    override fun setupData() {
         binding.ppWebSl.loadUrl(Constant.PRIVACY_SL_AGREEMENT)
         binding.ppWebSl.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
@@ -49,14 +41,6 @@ class WebSlActivity : BaseActivity<ActivityWebSlBinding, BaseViewModel>() {
             }
 
             override fun onPageFinished(view: WebView, url: String) {
-            }
-
-            override fun onReceivedSslError(
-                view: WebView,
-                handler: SslErrorHandler,
-                error: SslError
-            ) {
-                handler.proceed()
             }
         }
 
@@ -79,7 +63,6 @@ class WebSlActivity : BaseActivity<ActivityWebSlBinding, BaseViewModel>() {
             }
         }
 
-
     }
 
 
@@ -99,4 +82,5 @@ class WebSlActivity : BaseActivity<ActivityWebSlBinding, BaseViewModel>() {
         binding.ppWebSl.destroy()
         super.onDestroy()
     }
+
 }

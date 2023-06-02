@@ -8,10 +8,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.vkas.spacelocker.R
-import com.vkas.spacelocker.utils.KLog
 import com.xuexiang.xui.widget.progress.HorizontalProgressView
 import java.util.*
 

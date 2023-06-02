@@ -1,43 +1,39 @@
 package com.vkas.spacelocker.uisl.main
 
+import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.vkas.spacelocker.R
 import com.vkas.spacelocker.bean.SlAppBean
-import com.vkas.spacelocker.utils.KLog
 import com.vkas.spacelocker.utils.SpaceLockerUtils
 
-class AppListAdapter(data: MutableList<SlAppBean>?) :
-    BaseQuickAdapter<SlAppBean, BaseViewHolder>(
-        R.layout.item_app,
-        data
-    ) {
-    override fun convert(holder: BaseViewHolder, item: SlAppBean) {
-        KLog.d("TAG", "item.appNameSl===${item}")
-        if (SpaceLockerUtils.isOnRight == 0) {
-            //在左边
-            setVisibility(item.isLocked, holder.itemView)
-        } else {
-            //在右边
-            setVisibility(true, holder.itemView)
+class AppListAdapter(private val dataList: MutableList<SlAppBean>,val context: Context) :
+    RecyclerView.Adapter<AppListAdapter.ViewHolder>() {
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvAppName: TextView = itemView.findViewById(R.id.tv_app_name)
+        var imgAppIcon: ImageView = itemView.findViewById(R.id.img_app_icon)
+        var imgDownState: ImageView = itemView.findViewById(R.id.img_down_state)
+        init {
+            imgDownState.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    // 处理 item 点击事件
+                    MainViewFun.liveItemClick.postValue(position)
+                }
+            }
         }
-        holder.setImageDrawable(R.id.img_app_icon, item.appIconSl)
-        holder.setText(R.id.tv_app_name, item.appNameSl)
-        if (item.isLocked) {
-            holder.setImageDrawable(
-                R.id.img_down_state,
-                ContextCompat.getDrawable(context, R.drawable.ic_lock)
-            )
-        } else {
-            holder.setImageDrawable(
-                R.id.img_down_state,
-                ContextCompat.getDrawable(context, R.drawable.ic_no_lock)
-            )
-        }
+    }
+    fun addAdapterData(newData: MutableList<SlAppBean>) {
+        dataList.removeAll(newData)
+        dataList.addAll(newData)
+        notifyDataSetChanged()
     }
 
     private fun setVisibility(isVisible: Boolean, itemView: View) {
@@ -52,5 +48,40 @@ class AppListAdapter(data: MutableList<SlAppBean>?) :
             param.width = 0
         }
         itemView.layoutParams = param
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val context: Context = parent.context
+        val inflater = LayoutInflater.from(context)
+        // 加载自定义的布局文件
+        val itemView: View = inflater.inflate(R.layout.item_app, parent, false)
+        // 创建ViewHolder对象
+        return ViewHolder(itemView)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val itemData = dataList.getOrNull(position)?: SlAppBean()
+        if (SpaceLockerUtils.isOnRight == 0) {
+            //在左边
+            setVisibility(itemData.isLocked, holder.itemView)
+        } else {
+            //在右边
+            setVisibility(true, holder.itemView)
+        }
+        holder.imgAppIcon.setImageDrawable(itemData.appIconSl)
+        holder.tvAppName.text = itemData.appNameSl
+        if (itemData.isLocked) {
+            holder.imgDownState.setImageDrawable(
+                ContextCompat.getDrawable(context, R.drawable.ic_lock)
+            )
+        } else {
+            holder.imgDownState.setImageDrawable(
+                ContextCompat.getDrawable(context, R.drawable.ic_no_lock)
+            )
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return dataList.size
     }
 }

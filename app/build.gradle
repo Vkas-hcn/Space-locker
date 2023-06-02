@@ -46,8 +46,6 @@ android {
 }
 
 dependencies {
-    implementation project(':shadowsocks')
-
     //androidx项目xui
     implementation 'com.github.xuexiangjys:XUI:1.2.0'
     implementation 'com.github.xuexiangjys.XUtil:xutil-core:2.0.0'

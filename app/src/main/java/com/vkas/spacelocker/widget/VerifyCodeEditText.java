@@ -23,11 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.vkas.spacelocker.R;
-import com.vkas.spacelocker.utils.KLog;
 import com.xuexiang.xui.utils.DensityUtils;
 import com.xuexiang.xui.utils.ResUtils;
 import com.xuexiang.xui.widget.edittext.verify.PwdEditText;
-import com.vkas.spacelocker.widget.PwdTextView;
 import com.xuexiang.xui.widget.edittext.verify.TInputConnection;
 
 public class VerifyCodeEditText extends FrameLayout {
