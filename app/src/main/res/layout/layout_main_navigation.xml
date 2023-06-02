@@ -6,7 +6,7 @@
 
         <variable
             name="presenter"
-            type="com.vkas.spacelocker.uisl.main.MainActivity.SLClick" />
+            type="sl.wo.ip.uisl.main.MainActivity.SLClick" />
 
 
     </data>
@@ -51,6 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="12dp"
+                    android:visibility="gone"
                     android:gravity="start|center_vertical"
                     android:onClick="@{() ->presenter.toContactUs()}"
                     android:paddingTop="25dp"
