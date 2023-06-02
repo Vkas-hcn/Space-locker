@@ -73,7 +73,6 @@ dependencies {
     implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.8'
     implementation 'com.tencent:mmkv:1.2.14'
-    api 'cat.ereza:customactivityoncrash:2.3.0'
     implementation rootProject.ext.dependencies.coreKtx
     implementation rootProject.ext.dependencies.fragmentKtx
     implementation rootProject.ext.dependencies.lifeCycleKtx
@@ -87,7 +86,6 @@ dependencies {
     implementation rootProject.ext.dependencies.lottie
     implementation platform(rootProject.ext.dependencies.firebaseBom)
     implementation rootProject.ext.dependencies.firebaseConfigKtx
-    implementation rootProject.ext.dependencies.gmsAds
     implementation rootProject.ext.dependencies.gson
     implementation rootProject.ext.dependencies.rxpermissions
     implementation rootProject.ext.dependencies.glide

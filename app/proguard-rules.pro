@@ -37,4 +37,4 @@
 -keep public class android.webkit.WebView
 -keep public class android.net.http.SslError
 -keep public class android.webkit.WebViewClient
--keep class com.vkas.spacelocker.bean.SlAppBean { *; }
+-keep class sl.wo.ip.bean.SlAppBean { *; }

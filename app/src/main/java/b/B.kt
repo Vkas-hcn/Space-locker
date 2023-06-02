@@ -10,12 +10,10 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.blankj.utilcode.util.LogUtils
-import com.google.android.gms.ads.MobileAds
 import com.tencent.mmkv.MMKV
 import sl.wo.ip.enevtsl.Constant
 import c.C
 import com.blankj.utilcode.util.ProcessUtils
-import com.google.android.gms.ads.AdActivity
 import com.google.firebase.FirebaseApp
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
@@ -62,7 +60,6 @@ class B : Application(), LifecycleObserver {
         MMKV.initialize(this)
 //        initCrash()
         setActivityLifecycleSl(this)
-        MobileAds.initialize(this) {}
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         if (ProcessUtils.isMainProcess()) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
@@ -113,38 +110,26 @@ class B : Application(), LifecycleObserver {
         application.registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 ActivityStackManager.addActivity(activity)
-                if (activity !is AdActivity) {
-                    top_activity_sl = activity
-                } else {
-                    ad_activity_sl = activity
-                }
+                top_activity_sl = activity
                 LogUtils.v("Lifecycle", "onActivityCreated" + activity.javaClass.name)
             }
 
             override fun onActivityStarted(activity: Activity) {
                 LogUtils.v("Lifecycle", "onActivityStarted" + activity.javaClass.name)
-                if (activity !is AdActivity) {
-                    top_activity_sl = activity
-                } else {
-                    ad_activity_sl = activity
-                }
+
+                top_activity_sl = activity
+
                 flag++
                 isBackDataSl = false
             }
 
             override fun onActivityResumed(activity: Activity) {
                 LogUtils.v("Lifecycle", "onActivityResumed=" + activity.javaClass.name)
-                if (activity !is AdActivity) {
                     top_activity_sl = activity
-                }
             }
 
             override fun onActivityPaused(activity: Activity) {
-                if (activity is AdActivity) {
-                    ad_activity_sl = activity
-                } else {
-                    top_activity_sl = activity
-                }
+                top_activity_sl = activity
                 LogUtils.v("Lifecycle", "onActivityPaused=" + activity.javaClass.name)
             }
 
