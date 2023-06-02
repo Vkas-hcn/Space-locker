@@ -45,7 +45,6 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
 
     // 跳转后弹框
     private var bounceBoxAfterJump = false
-    val debounceUtil = DebounceUtil(1000) // 设置延迟时间为 1000 毫秒
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -86,17 +85,9 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
             .observeForever {
                 sortApplicationToEmptyList()
             }
-
-        onImageStateClick()
     }
 
-    private fun onImageStateClick() {
-        MainViewFun.liveItemClick.observe(this) {
-            debounceUtil.debounce {
-                clickFun(it)
-            }
-        }
-    }
+
 
     private fun clickFun(position: Int) {
         LogUtils.e("TAG", "setOnItemChildClickListener-11111")
@@ -136,6 +127,12 @@ class MainActivity : BaseActivity2<ActivityMainBinding>() {
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.recAppList.layoutManager = layoutManager
         binding.recAppList.adapter = appListAdapter
+
+        appListAdapter.setOnItemClickListener(object : AppListAdapter.OnItemClickListener {
+            override fun onItemClick(position: Int) {
+                clickFun(position)
+            }
+        })
     }
 
     /**

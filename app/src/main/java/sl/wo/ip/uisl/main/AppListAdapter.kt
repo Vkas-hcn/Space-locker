@@ -11,10 +11,12 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import sl.wo.ip.R
 import sl.wo.ip.bean.SlAppBean
+import sl.wo.ip.utils.DebounceUtil
 import sl.wo.ip.utils.SpaceLockerUtils
 
 class AppListAdapter(private val dataList: MutableList<SlAppBean>,val context: Context) :
     RecyclerView.Adapter<AppListAdapter.ViewHolder>() {
+    val debounceUtil = DebounceUtil(1000) // 设置延迟时间为 1000 毫秒
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvAppName: TextView = itemView.findViewById(R.id.tv_app_name)
@@ -25,10 +27,26 @@ class AppListAdapter(private val dataList: MutableList<SlAppBean>,val context: C
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     // 处理 item 点击事件
-                    MainViewFun.liveItemClick.postValue(position)
+                    onItemClick(position)
                 }
             }
         }
+    }
+
+    // 定义点击事件的回调接口
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
+    }
+
+    private var onItemClickListener: OnItemClickListener? = null
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        onItemClickListener = listener
+    }
+
+    // 在 item 点击事件中触发回调
+    private fun onItemClick(position: Int) {
+        onItemClickListener?.onItemClick(position)
     }
     fun addAdapterData(newData: MutableList<SlAppBean>) {
         dataList.removeAll(newData)

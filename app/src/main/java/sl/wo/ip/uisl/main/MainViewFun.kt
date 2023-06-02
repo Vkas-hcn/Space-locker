@@ -22,9 +22,6 @@ object MainViewFun:ViewModel() {
     val liveLock: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
     }
-    val liveItemClick:MutableLiveData<Int> by lazy {
-        MutableLiveData<Int>()
-    }
     /**
      * 存储已加锁的应用
      */

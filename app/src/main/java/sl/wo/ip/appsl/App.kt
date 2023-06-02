@@ -50,8 +50,6 @@ class App : Application(), LifecycleObserver {
         var whetherBackgroundSl = false
         // 是否是跳转权限
         var whetherJumpPermission = false
-        // 原生广告刷新
-        var nativeAdRefreshSl = false
         val mmkvSl by lazy {
             //启用mmkv的多进程功能
             MMKV.mmkvWithID("SpaceLocker", MMKV.MULTI_PROCESS_MODE)
@@ -80,7 +78,6 @@ class App : Application(), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onMoveToForeground() {
-        nativeAdRefreshSl = true
         job_sl?.cancel()
         job_sl = null
         //从后台切过来，跳转启动页
